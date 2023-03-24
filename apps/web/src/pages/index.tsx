@@ -1,11 +1,10 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const hello = api.example.getAll.useQuery();
 
   return (
     <>
@@ -15,7 +14,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+        {hello.data ? JSON.stringify(hello.data) : "Loading tRPC query..."}
       </main>
     </>
   );
