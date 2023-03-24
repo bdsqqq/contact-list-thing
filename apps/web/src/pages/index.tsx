@@ -3,6 +3,104 @@ import Head from "next/head";
 
 import { api } from "~/utils/api";
 
+const mockData = {
+  expected: `
+  name,email,subscribed,created_at
+  John Doe,johndoe@resend.com,true,2022-01-01
+  Jane Smith,janesmith@resend.com,false,2022-02-15
+  Bob Johnson,bobjohnson@resend.com,true,2022-03-20
+  Alice Lee,alicelee@resend.com,true,2022-04-05
+  Tom Brown,tombrown@resend.com,false,2022-05-10
+  Sara Kim,sarakim@resend.com,true,2022-06-01
+  Chris Lee,chrislee@resend.com,false,2022-07-15
+  Zeno,zeno@resend.com,true,2022-08-01
+  Bu,bu@resend.com,true,2022-09-05
+  Jonni,jonni@resend.com,false,2022-10-20
+  `,
+  // Should ignore empty lines
+  expectedWithALotOfExtraLines: `
+  
+  
+  name,email,subscribed,created_at
+  John Doe,johndoe@resend.com,true,2022-01-01
+  Jane Smith,janesmith@resend.com,false,2022-02-15
+  Bob Johnson,bobjohnson@resend.com,true,2022-03-20
+  Alice Lee,alicelee@resend.com,true,2022-04-05
+  Tom Brown,tombrown@resend.com,false,2022-05-10
+  
+  Sara Kim,sarakim@resend.com,true,2022-06-01
+  
+  
+  
+  Chris Lee,chrislee@resend.com,false,2022-07-15
+  Zeno,zeno@resend.com,true,2022-08-01
+  Bu,bu@resend.com,true,2022-09-05
+  Jonni,jonni@resend.com,false,2022-10-20
+  
+  
+  
+  `,
+  // In this case, the first entry would be the header. No way to valdiate it so at upload should be validated by the user. This fits in the `map` case as we're going to ask them if the headers are correct anyways. see linear CLT-4
+  withoutHeaders: `
+  John Doe,johndoe@resend.com,true,2022-01-01
+  Jane Smith,janesmith@resend.com,false,2022-02-15
+  Bob Johnson,bobjohnson@resend.com,true,2022-03-20
+  Alice Lee,alicelee@resend.com,true,2022-04-05
+  Tom Brown,tombrown@resend.com,false,2022-05-10
+  Sara Kim,sarakim@resend.com,true,2022-06-01
+  Chris Lee,chrislee@resend.com,false,2022-07-15
+  Zeno,zeno@resend.com,true,2022-08-01
+  Bu,bu@resend.com,true,2022-09-05
+  Jonni,jonni@resend.com,false,2022-10-20
+  `,
+  withHeadersThatDontMatchOurSchema: `
+  first_name,email,subscribed,created_at,last_name
+  John,johndoe@resend.com,true,2022-01-01,Doe
+  Jane,janesmith@resend.com,false,2022-02-15,Smith
+  Bob,bobjohnson@resend.com,true,2022-03-20,Johnson
+  Alice,alicelee@resend.com,true,2022-04-05,Lee
+  Tom,tombrown@resend.com,false,2022-05-10,Brown
+  Sara,sarakim@resend.com,true,2022-06-01,Kim
+  Chris,chrislee@resend.com,false,2022-07-15,Lee
+  Zeno,zeno@resend.com,true,2022-08-01,Zeno
+  Bu,bu@resend.com,true,2022-09-05,Bu
+  Jonni,jonni@resend.com,false,2022-10-20,Jonni
+  `,
+  withoutData: `
+  name,email,subscribed,created_at
+  `,
+};
+
+const csvToJson = (csv: string) => {
+  const lines = csv
+    .trim()
+    .split(/\n/)
+    .map((line) => line.trim()); // could trim when assigning values to reduce iterations
+  console.log({ lines });
+
+  if (lines.length < 1 || !lines[0]) return "No headers";
+  if (lines.length < 2 || !lines[1]) return "No data";
+
+  const headers = lines[0].split(",");
+  console.log({ headers });
+
+  const data = lines
+    .slice(1)
+    .filter((line) => line) // Filters out the empty lines, needs trimming to happen before. Could instead return null if !line in the map bellow to reduce iterations
+    .map((line) => {
+      // if (!line) return;
+
+      const values = line.split(",");
+      return headers.reduce((obj: any, header, index) => {
+        obj[header] = values[index];
+        return obj;
+      }, {});
+    });
+
+  console.log(data);
+  return data;
+};
+
 const Home: NextPage = () => {
   const hello = api.example.getAll.useQuery();
 
@@ -14,7 +112,11 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {hello.data ? JSON.stringify(hello.data) : "Loading tRPC query..."}
+        <pre>
+          <code>
+            {JSON.stringify(csvToJson(mockData.withoutData), null, 2)}
+          </code>
+        </pre>
       </main>
     </>
   );
