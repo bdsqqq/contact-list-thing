@@ -1,4 +1,5 @@
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ["ui"],
+  //  Uncomment the following if you want to include a package from the monorepo
+  //  transpilePackages: [],
 };
