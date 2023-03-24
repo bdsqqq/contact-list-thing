@@ -66,6 +66,9 @@ const mockData = {
   Bu,bu@resend.com,true,2022-09-05,Bu
   Jonni,jonni@resend.com,false,2022-10-20,Jonni
   `,
+  withoutData: `
+  name,email,subscribed,created_at
+  `,
 };
 
 const csvToJson = (csv: string) => {
