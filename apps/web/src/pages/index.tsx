@@ -72,19 +72,30 @@ const mockData = {
 };
 
 const csvToJson = (csv: string) => {
-  const lines = csv.trim().split(/\n/); // lol I learned this in Advent of code, let's gooo, I knew it would be useful
+  const lines = csv
+    .trim()
+    .split(/\n/)
+    .map((line) => line.trim()); // could trim when assigning values to reduce iterations
+  console.log({ lines });
 
-  if (lines.length < 1 || !lines[0]) return console.log("No headers");
-  if (lines.length < 2 || !lines[1]) return console.log("No data");
+  if (lines.length < 1 || !lines[0]) return "No headers";
+  if (lines.length < 2 || !lines[1]) return "No data";
 
   const headers = lines[0].split(",");
-  const data = lines.slice(1).map((line) => {
-    const values = line.split(",");
-    return headers.reduce((obj: any, header, index) => {
-      obj[header] = values[index];
-      return obj;
-    }, {});
-  });
+  console.log({ headers });
+
+  const data = lines
+    .slice(1)
+    .filter((line) => line) // Filters out the empty lines, needs trimming to happen before. Could instead return null if !line in the map bellow to reduce iterations
+    .map((line) => {
+      // if (!line) return;
+
+      const values = line.split(",");
+      return headers.reduce((obj: any, header, index) => {
+        obj[header] = values[index];
+        return obj;
+      }, {});
+    });
 
   console.log(data);
   return data;
@@ -103,11 +114,7 @@ const Home: NextPage = () => {
       <main>
         <pre>
           <code>
-            {JSON.stringify(
-              csvToJson(mockData.expectedWithALotOfExtraLines),
-              null,
-              2
-            )}
+            {JSON.stringify(csvToJson(mockData.withoutData), null, 2)}
           </code>
         </pre>
       </main>
