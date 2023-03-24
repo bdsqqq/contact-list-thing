@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import { useState } from "react";
 
 import { api } from "~/utils/api";
 
@@ -103,6 +104,7 @@ const csvToJson = (csv: string) => {
 
 const Home: NextPage = () => {
   const hello = api.example.getAll.useQuery();
+  const [fileData, setFileData] = useState<string | null>(null);
 
   return (
     <>
@@ -112,9 +114,22 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <input
+          type="file"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              setFileData(e.target?.result as string);
+            };
+            reader.readAsText(file);
+          }}
+        />
         <pre>
           <code>
-            {JSON.stringify(csvToJson(mockData.withoutData), null, 2)}
+            {fileData && fileData}
+            {/* {JSON.stringify(csvToJson(mockData.withoutData), null, 2)} */}
           </code>
         </pre>
       </main>
