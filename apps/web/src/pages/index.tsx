@@ -17,6 +17,7 @@ const mockData = {
   Bu,bu@resend.com,true,2022-09-05
   Jonni,jonni@resend.com,false,2022-10-20
   `,
+  // Should ignore empty lines
   expectedWithALotOfExtraLines: `
   
   
@@ -38,6 +39,32 @@ const mockData = {
   
   
   
+  `,
+  // In this case, the first entry would be the header. No way to valdiate it so at upload should be validated by the user. This fits in the `map` case as we're going to ask them if the headers are correct anyways. see linear CLT-4
+  withoutHeaders: `
+  John Doe,johndoe@resend.com,true,2022-01-01
+  Jane Smith,janesmith@resend.com,false,2022-02-15
+  Bob Johnson,bobjohnson@resend.com,true,2022-03-20
+  Alice Lee,alicelee@resend.com,true,2022-04-05
+  Tom Brown,tombrown@resend.com,false,2022-05-10
+  Sara Kim,sarakim@resend.com,true,2022-06-01
+  Chris Lee,chrislee@resend.com,false,2022-07-15
+  Zeno,zeno@resend.com,true,2022-08-01
+  Bu,bu@resend.com,true,2022-09-05
+  Jonni,jonni@resend.com,false,2022-10-20
+  `,
+  withHeadersThatDontMatchOurSchema: `
+  first_name,email,subscribed,created_at,last_name
+  John,johndoe@resend.com,true,2022-01-01,Doe
+  Jane,janesmith@resend.com,false,2022-02-15,Smith
+  Bob,bobjohnson@resend.com,true,2022-03-20,Johnson
+  Alice,alicelee@resend.com,true,2022-04-05,Lee
+  Tom,tombrown@resend.com,false,2022-05-10,Brown
+  Sara,sarakim@resend.com,true,2022-06-01,Kim
+  Chris,chrislee@resend.com,false,2022-07-15,Lee
+  Zeno,zeno@resend.com,true,2022-08-01,Zeno
+  Bu,bu@resend.com,true,2022-09-05,Bu
+  Jonni,jonni@resend.com,false,2022-10-20,Jonni
   `,
 };
 
