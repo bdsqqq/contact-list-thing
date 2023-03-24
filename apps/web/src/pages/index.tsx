@@ -3,19 +3,62 @@ import Head from "next/head";
 
 import { api } from "~/utils/api";
 
-const mockData = `
-name,email,subscribed,created_at
-John Doe,johndoe@resend.com,true,2022-01-01
-Jane Smith,janesmith@resend.com,false,2022-02-15
-Bob Johnson,bobjohnson@resend.com,true,2022-03-20
-Alice Lee,alicelee@resend.com,true,2022-04-05
-Tom Brown,tombrown@resend.com,false,2022-05-10
-Sara Kim,sarakim@resend.com,true,2022-06-01
-Chris Lee,chrislee@resend.com,false,2022-07-15
-Zeno,zeno@resend.com,true,2022-08-01
-Bu,bu@resend.com,true,2022-09-05
-Jonni,jonni@resend.com,false,2022-10-20
-`;
+const mockData = {
+  expected: `
+  name,email,subscribed,created_at
+  John Doe,johndoe@resend.com,true,2022-01-01
+  Jane Smith,janesmith@resend.com,false,2022-02-15
+  Bob Johnson,bobjohnson@resend.com,true,2022-03-20
+  Alice Lee,alicelee@resend.com,true,2022-04-05
+  Tom Brown,tombrown@resend.com,false,2022-05-10
+  Sara Kim,sarakim@resend.com,true,2022-06-01
+  Chris Lee,chrislee@resend.com,false,2022-07-15
+  Zeno,zeno@resend.com,true,2022-08-01
+  Bu,bu@resend.com,true,2022-09-05
+  Jonni,jonni@resend.com,false,2022-10-20
+  `,
+  expectedWithALotOfExtraLines: `
+  
+  
+  name,email,subscribed,created_at
+  John Doe,johndoe@resend.com,true,2022-01-01
+  Jane Smith,janesmith@resend.com,false,2022-02-15
+  Bob Johnson,bobjohnson@resend.com,true,2022-03-20
+  Alice Lee,alicelee@resend.com,true,2022-04-05
+  Tom Brown,tombrown@resend.com,false,2022-05-10
+  
+  Sara Kim,sarakim@resend.com,true,2022-06-01
+  
+  
+  
+  Chris Lee,chrislee@resend.com,false,2022-07-15
+  Zeno,zeno@resend.com,true,2022-08-01
+  Bu,bu@resend.com,true,2022-09-05
+  Jonni,jonni@resend.com,false,2022-10-20
+  
+  
+  
+  `,
+};
+
+const csvToJson = (csv: string) => {
+  const lines = csv.trim().split(/\n/); // lol I learned this in Advent of code, let's gooo, I knew it would be useful
+
+  if (lines.length < 1 || !lines[0]) return console.log("No headers");
+  if (lines.length < 2 || !lines[1]) return console.log("No data");
+
+  const headers = lines[0].split(",");
+  const data = lines.slice(1).map((line) => {
+    const values = line.split(",");
+    return headers.reduce((obj: any, header, index) => {
+      obj[header] = values[index];
+      return obj;
+    }, {});
+  });
+
+  console.log(data);
+  return data;
+};
 
 const Home: NextPage = () => {
   const hello = api.example.getAll.useQuery();
@@ -28,7 +71,15 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {hello.data ? JSON.stringify(hello.data) : "Loading tRPC query..."}
+        <pre>
+          <code>
+            {JSON.stringify(
+              csvToJson(mockData.expectedWithALotOfExtraLines),
+              null,
+              2
+            )}
+          </code>
+        </pre>
       </main>
     </>
   );
