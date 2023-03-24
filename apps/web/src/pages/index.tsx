@@ -116,6 +116,7 @@ const Home: NextPage = () => {
       <main>
         <input
           type="file"
+          accept=".csv"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (!file) return;
