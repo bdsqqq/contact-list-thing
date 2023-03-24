@@ -7,6 +7,7 @@ const config = {
     {
       extends: [
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "custom",
       ],
       files: ["*.ts", "*.tsx"],
       parserOptions: {
@@ -19,8 +20,7 @@ const config = {
     project: path.join(__dirname, "tsconfig.json"),
   },
   plugins: ["@typescript-eslint"],
-  root: true,
-  extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "custom"],
+  extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
   rules: {
     "@typescript-eslint/consistent-type-imports": [
       "warn",
