@@ -119,7 +119,7 @@ const csvToJson = (csv: string) => {
 
 // I know I'll always want a particular schema, so it's easier to start from there
 const mapCsvProperties = (
-  data: any,
+  data: { [key: string]: string }[],
   columnOverrides?: {
     name?: string | string[];
     email?: string | string[];
@@ -137,16 +137,22 @@ const mapCsvProperties = (
     columnOverrides
   );
 
-  const makeValueFromArrayOfKeys = (obj: any, keys: string[]) => {
-    console.log({ obj });
-    return keys.reduce((acc: any, key) => {
-      if (!obj[key]) return acc;
-      acc += ` ${obj[key]}`;
+  const makeValueFromArrayOfKeys = (
+    row: { [key: string]: string },
+    keys: string[]
+  ) => {
+    return keys.reduce((acc, key) => {
+      if (!row[key]) return acc;
+
+      acc += ` ${row[key]}`;
       return acc;
     }, "");
   };
 
-  const mapRowWithKeys = (row: any, keys: string | string[]) => {
+  const mapRowWithKeys = (
+    row: { [key: string]: string },
+    keys: string | string[]
+  ) => {
     if (Array.isArray(keys)) {
       return makeValueFromArrayOfKeys(row, keys);
     }
