@@ -79,11 +79,13 @@ const csvToJson = (csv: string) => {
     .map((line) => line.trim()); // could trim when assigning values to reduce iterations
   console.log({ lines });
 
-  if (lines.length < 1 || !lines[0]) return "No headers";
-  if (lines.length < 2 || !lines[1]) return "No data";
+  if (lines.length < 1 || !lines[0]) return { data: [], columns: [] };
+  const columns = lines[0].split(",");
 
-  const headers = lines[0].split(",");
-  console.log({ headers });
+  if (lines.length < 2 || !lines[1])
+    return { data: [], columns: lines[0].split(",") };
+
+  console.log({ columns: columns });
 
   const data = lines
     .slice(1)
@@ -92,14 +94,36 @@ const csvToJson = (csv: string) => {
       // if (!line) return;
 
       const values = line.split(",");
-      return headers.reduce((obj: any, header, index) => {
+      return columns.reduce((obj: any, header, index) => {
         obj[header] = values[index];
         return obj;
       }, {});
     });
 
   console.log(data);
-  return data;
+  return { data, columns };
+};
+
+const mapCsvProperties = (
+  data: any,
+  columns: string[],
+  columnOverrides: [string, string][]
+) => {
+  return data.map((entry: any) => {
+    const mappedEntry = {};
+    columns.forEach((column) => {
+      if (columnOverrides.find(([from, to]) => from === column)) {
+        const [from, to] = columnOverrides.find(
+          ([from, to]) => from === column
+        );
+        mappedEntry[to] = entry[column];
+        return;
+      }
+
+      mappedEntry[column] = entry[column];
+    });
+    return mappedEntry;
+  });
 };
 
 const Home: NextPage = () => {
@@ -129,8 +153,16 @@ const Home: NextPage = () => {
         />
         <pre>
           <code>
-            {fileData && fileData}
-            {/* {JSON.stringify(csvToJson(mockData.withoutData), null, 2)} */}
+            {/* {fileData && fileData} */}
+            {JSON.stringify(
+              mapCsvProperties(
+                csvToJson(mockData.withHeadersThatDontMatchOurSchema).data,
+                csvToJson(mockData.withHeadersThatDontMatchOurSchema).columns,
+                [["first_name", "name"]]
+              ),
+              null,
+              2
+            )}
           </code>
         </pre>
       </main>
