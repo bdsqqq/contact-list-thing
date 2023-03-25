@@ -67,6 +67,19 @@ const mockData = {
   Bu,bu@resend.com,true,2022-09-05,Bu
   Jonni,jonni@resend.com,false,2022-10-20,Jonni
   `,
+  withHeadersThatDontMatchOurSchemaAndEmptyValues: `
+  first_name,email,subscribed,created_at,last_name
+  John,johndoe@resend.com,true,2022-01-01,Doe
+  Jane,janesmith@resend.com,false,2022-02-15,Smith
+  Bob,bobjohnson@resend.com,true,2022-03-20,Johnson
+  Alice,alicelee@resend.com,true,2022-04-05,Lee
+  Tom,tombrown@resend.com,false,2022-05-10,Brown
+  Sara,sarakim@resend.com,true,2022-06-01,Kim
+  Chris,chrislee@resend.com,false,2022-07-15,Lee
+  Zeno,zeno@resend.com,true,2022-08-01,
+  Bu,bu@resend.com,true,2022-09-05,
+  Jonni,jonni@resend.com,false,2022-10-20,
+  `,
   withoutData: `
   name,email,subscribed,created_at
   `,
