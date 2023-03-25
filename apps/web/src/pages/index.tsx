@@ -67,6 +67,19 @@ const mockData = {
   Bu,bu@resend.com,true,2022-09-05,Bu
   Jonni,jonni@resend.com,false,2022-10-20,Jonni
   `,
+  withHeadersThatDontMatchOurSchemaAndEmptyValues: `
+  first_name,email,subscribed,created_at,last_name
+  John,johndoe@resend.com,true,2022-01-01,Doe
+  Jane,janesmith@resend.com,false,2022-02-15,Smith
+  Bob,bobjohnson@resend.com,true,2022-03-20,Johnson
+  Alice,alicelee@resend.com,true,2022-04-05,Lee
+  Tom,tombrown@resend.com,false,2022-05-10,Brown
+  Sara,sarakim@resend.com,true,2022-06-01,Kim
+  Chris,chrislee@resend.com,false,2022-07-15,Lee
+  Zeno,zeno@resend.com,true,2022-08-01,
+  Bu,bu@resend.com,true,2022-09-05,
+  Jonni,jonni@resend.com,false,2022-10-20,
+  `,
   withoutData: `
   name,email,subscribed,created_at
   `,
@@ -79,11 +92,13 @@ const csvToJson = (csv: string) => {
     .map((line) => line.trim()); // could trim when assigning values to reduce iterations
   console.log({ lines });
 
-  if (lines.length < 1 || !lines[0]) return "No headers";
-  if (lines.length < 2 || !lines[1]) return "No data";
+  if (lines.length < 1 || !lines[0]) return { data: [], columns: [] };
+  const columns = lines[0].split(",");
 
-  const headers = lines[0].split(",");
-  console.log({ headers });
+  if (lines.length < 2 || !lines[1])
+    return { data: [], columns: lines[0].split(",") };
+
+  console.log({ columns: columns });
 
   const data = lines
     .slice(1)
@@ -92,14 +107,70 @@ const csvToJson = (csv: string) => {
       // if (!line) return;
 
       const values = line.split(",");
-      return headers.reduce((obj: any, header, index) => {
-        obj[header] = values[index];
-        return obj;
-      }, {});
+
+      return columns.reduce((acc, header, index) => {
+        if (columns.length !== values.length) {
+          console.error(
+            `The number of columns (${columns.length}) does not match the number of values (${values.length})`
+          );
+        }
+        acc.set(header, values[index] || "");
+        return acc;
+      }, new Map<any, string>());
     });
 
   console.log(data);
-  return data;
+  return { data, columns };
+};
+
+// I know I'll always want a particular schema, so it's easier to start from there
+const mapCsvProperties = (
+  data: Map<string, string>[],
+  columnOverrides?: {
+    name?: string | string[];
+    email?: string | string[];
+    subscribed?: string | string[];
+    created_at?: string | string[];
+  }
+) => {
+  const cols = Object.assign(
+    {
+      name: "name",
+      email: "email",
+      subscribed: "subscribed",
+      created_at: "created_at",
+    },
+    columnOverrides
+  );
+
+  const makeValueFromArrayOfKeys = (
+    row: Map<string, string>,
+    keys: string[]
+  ) => {
+    return keys.reduce((acc, key) => {
+      if (!row.get(key)) return acc;
+
+      acc += ` ${row.get(key)}`;
+      return acc;
+    }, "");
+  };
+
+  const mapRowWithKeys = (
+    row: Map<string, string>,
+    keys: string | string[]
+  ) => {
+    if (Array.isArray(keys)) {
+      return makeValueFromArrayOfKeys(row, keys);
+    }
+    return row.get(keys);
+  };
+
+  return data.map((row: any) => ({
+    name: mapRowWithKeys(row, cols.name),
+    email: mapRowWithKeys(row, cols.email),
+    subscribed: mapRowWithKeys(row, cols.subscribed),
+    created_at: mapRowWithKeys(row, cols.created_at),
+  }));
 };
 
 const Home: NextPage = () => {
@@ -129,8 +200,19 @@ const Home: NextPage = () => {
         />
         <pre>
           <code>
-            {fileData && fileData}
-            {/* {JSON.stringify(csvToJson(mockData.withoutData), null, 2)} */}
+            {/* {fileData && fileData} */}
+            {JSON.stringify(
+              mapCsvProperties(
+                csvToJson(
+                  mockData.withHeadersThatDontMatchOurSchemaAndEmptyValues
+                ).data,
+                {
+                  name: ["first_name", "last_name"],
+                }
+              ),
+              null,
+              2
+            )}
           </code>
         </pre>
       </main>
