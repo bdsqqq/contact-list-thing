@@ -170,10 +170,8 @@ const mapCsvProperties = (
     keys: string[]
   ) => {
     return keys.reduce((acc, key) => {
-      if (!row.get(key)) return acc;
-
       acc += ` ${row.get(key)}`;
-      return acc;
+      return acc.trim();
     }, "");
   };
 
