@@ -104,26 +104,33 @@ const csvToJson = (csv: string) => {
   return { data, columns };
 };
 
+// I know I'll always want a particular schema, so it's easier to start from there
 const mapCsvProperties = (
   data: any,
-  columns: string[],
-  columnOverrides: [string, string][]
+  columnOverrides?: {
+    name?: string;
+    email?: string;
+    subscribed?: string;
+    created_at?: string;
+  }
 ) => {
-  return data.map((entry: any) => {
-    const mappedEntry = {};
-    columns.forEach((column) => {
-      if (columnOverrides.find(([from, to]) => from === column)) {
-        const [from, to] = columnOverrides.find(
-          ([from, to]) => from === column
-        );
-        mappedEntry[to] = entry[column];
-        return;
-      }
+  const cols = Object.assign(
+    {
+      name: "name",
+      email: "email",
+      subscribed: "subscribed",
+      created_at: "created_at",
+    },
+    columnOverrides
+  );
 
-      mappedEntry[column] = entry[column];
-    });
-    return mappedEntry;
-  });
+  console.log(cols);
+  return data.map((row: any) => ({
+    name: row[cols.name],
+    email: row[cols.email],
+    subscribed: row[cols.subscribed],
+    created_at: row[cols.created_at],
+  }));
 };
 
 const Home: NextPage = () => {
@@ -157,8 +164,9 @@ const Home: NextPage = () => {
             {JSON.stringify(
               mapCsvProperties(
                 csvToJson(mockData.withHeadersThatDontMatchOurSchema).data,
-                csvToJson(mockData.withHeadersThatDontMatchOurSchema).columns,
-                [["first_name", "name"]]
+                {
+                  name: "first_name",
+                }
               ),
               null,
               2
