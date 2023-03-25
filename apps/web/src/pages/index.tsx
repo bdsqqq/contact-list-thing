@@ -107,10 +107,16 @@ const csvToJson = (csv: string) => {
       // if (!line) return;
 
       const values = line.split(",");
-      return columns.reduce((obj: any, header, index) => {
-        obj[header] = values[index];
-        return obj;
-      }, {});
+
+      return columns.reduce((acc, header, index) => {
+        if (columns.length !== values.length) {
+          console.error(
+            `The number of columns (${columns.length}) does not match the number of values (${values.length})`
+          );
+        }
+        acc.set(header, values[index] || "");
+        return acc;
+      }, new Map<any, string>());
     });
 
   console.log(data);
@@ -119,7 +125,7 @@ const csvToJson = (csv: string) => {
 
 // I know I'll always want a particular schema, so it's easier to start from there
 const mapCsvProperties = (
-  data: { [key: string]: string }[],
+  data: Map<string, string>[],
   columnOverrides?: {
     name?: string | string[];
     email?: string | string[];
@@ -138,25 +144,25 @@ const mapCsvProperties = (
   );
 
   const makeValueFromArrayOfKeys = (
-    row: { [key: string]: string },
+    row: Map<string, string>,
     keys: string[]
   ) => {
     return keys.reduce((acc, key) => {
-      if (!row[key]) return acc;
+      if (!row.get(key)) return acc;
 
-      acc += ` ${row[key]}`;
+      acc += ` ${row.get(key)}`;
       return acc;
     }, "");
   };
 
   const mapRowWithKeys = (
-    row: { [key: string]: string },
+    row: Map<string, string>,
     keys: string | string[]
   ) => {
     if (Array.isArray(keys)) {
       return makeValueFromArrayOfKeys(row, keys);
     }
-    return row[keys];
+    return row.get(keys);
   };
 
   return data.map((row: any) => ({
