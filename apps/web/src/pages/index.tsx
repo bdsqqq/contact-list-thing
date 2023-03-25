@@ -108,10 +108,10 @@ const csvToJson = (csv: string) => {
 const mapCsvProperties = (
   data: any,
   columnOverrides?: {
-    name?: string;
-    email?: string;
-    subscribed?: string;
-    created_at?: string;
+    name?: string | string[];
+    email?: string | string[];
+    subscribed?: string | string[];
+    created_at?: string | string[];
   }
 ) => {
   const cols = Object.assign(
@@ -124,12 +124,27 @@ const mapCsvProperties = (
     columnOverrides
   );
 
-  console.log(cols);
+  const makeValueFromArrayOfKeys = (obj: any, keys: string[]) => {
+    console.log({ obj });
+    return keys.reduce((acc: any, key) => {
+      console.log({ obj: obj[key], key });
+      acc += ` ${obj[key]}`;
+      return acc;
+    }, "");
+  };
+
+  const mapRowWithKeys = (row: any, keys: string | string[]) => {
+    if (Array.isArray(keys)) {
+      return makeValueFromArrayOfKeys(row, keys);
+    }
+    return row[keys];
+  };
+
   return data.map((row: any) => ({
-    name: row[cols.name],
-    email: row[cols.email],
-    subscribed: row[cols.subscribed],
-    created_at: row[cols.created_at],
+    name: mapRowWithKeys(row, cols.name),
+    email: mapRowWithKeys(row, cols.email),
+    subscribed: mapRowWithKeys(row, cols.subscribed),
+    created_at: mapRowWithKeys(row, cols.created_at),
   }));
 };
 
@@ -165,7 +180,7 @@ const Home: NextPage = () => {
               mapCsvProperties(
                 csvToJson(mockData.withHeadersThatDontMatchOurSchema).data,
                 {
-                  name: "first_name",
+                  name: ["first_name", "last_name"],
                 }
               ),
               null,
