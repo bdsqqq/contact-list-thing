@@ -140,7 +140,7 @@ const mapCsvProperties = (
   const makeValueFromArrayOfKeys = (obj: any, keys: string[]) => {
     console.log({ obj });
     return keys.reduce((acc: any, key) => {
-      console.log({ obj: obj[key], key });
+      if (!obj[key]) return acc;
       acc += ` ${obj[key]}`;
       return acc;
     }, "");
@@ -191,7 +191,9 @@ const Home: NextPage = () => {
             {/* {fileData && fileData} */}
             {JSON.stringify(
               mapCsvProperties(
-                csvToJson(mockData.withHeadersThatDontMatchOurSchema).data,
+                csvToJson(
+                  mockData.withHeadersThatDontMatchOurSchemaAndEmptyValues
+                ).data,
                 {
                   name: ["first_name", "last_name"],
                 }
