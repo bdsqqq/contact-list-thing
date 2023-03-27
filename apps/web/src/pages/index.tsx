@@ -1,12 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
+import { z } from "zod";
+import { subscriberSchema } from "~/utils/validators";
 
 import { api } from "~/utils/api";
 
 const mockData = {
   expected: `
-  name,email,subscribed,created_at
+  name,email,subscribed,createdAt
   John Doe,johndoe@resend.com,true,2022-01-01
   Jane Smith,janesmith@resend.com,false,2022-02-15
   Bob Johnson,bobjohnson@resend.com,true,2022-03-20
@@ -22,7 +24,7 @@ const mockData = {
   expectedWithALotOfExtraLines: `
   
   
-  name,email,subscribed,created_at
+  name,email,subscribed,createdAt
   John Doe,johndoe@resend.com,true,2022-01-01
   Jane Smith,janesmith@resend.com,false,2022-02-15
   Bob Johnson,bobjohnson@resend.com,true,2022-03-20
@@ -55,7 +57,7 @@ const mockData = {
   Jonni,jonni@resend.com,false,2022-10-20
   `,
   withHeadersThatDontMatchOurSchema: `
-  first_name,email,subscribed,created_at,last_name
+  first_name,email,subscribed,createdAt,last_name
   John,johndoe@resend.com,true,2022-01-01,Doe
   Jane,janesmith@resend.com,false,2022-02-15,Smith
   Bob,bobjohnson@resend.com,true,2022-03-20,Johnson
@@ -68,7 +70,7 @@ const mockData = {
   Jonni,jonni@resend.com,false,2022-10-20,Jonni
   `,
   withHeadersThatDontMatchOurSchemaAndEmptyValues: `
-  first_name,email,subscribed,created_at,last_name
+  first_name,email,subscribed,createdAt,last_name
   John,johndoe@resend.com,true,2022-01-01,Doe
   Jane,janesmith@resend.com,false,2022-02-15,Smith
   Bob,bobjohnson@resend.com,true,2022-03-20,Johnson
@@ -81,7 +83,7 @@ const mockData = {
   Jonni,jonni@resend.com,false,2022-10-20,
   `,
   withoutData: `
-  name,email,subscribed,created_at
+  name,email,subscribed,createdAt
   `,
 };
 
@@ -155,7 +157,7 @@ const mapCsvProperties = (
     name?: string | string[];
     email?: string | string[];
     subscribed?: string | string[];
-    created_at?: string | string[];
+    createdAt?: string | string[];
   }
 ) => {
   const cols = Object.assign(
@@ -163,7 +165,7 @@ const mapCsvProperties = (
       name: "name",
       email: "email",
       subscribed: "subscribed",
-      created_at: "created_at",
+      createdAt: "created_at",
     },
     columnOverrides
   );
@@ -196,14 +198,14 @@ const mapCsvProperties = (
     if (Array.isArray(keys)) {
       return makeValueFromArrayOfKeys(row, keys);
     }
-    return row.get(keys);
+    return row.get(keys) || "";
   };
 
   return data.map((row: any) => ({
     name: mapRowWithKeys(row, cols.name),
     email: mapRowWithKeys(row, cols.email),
     subscribed: mapRowWithKeys(row, cols.subscribed),
-    created_at: mapRowWithKeys(row, cols.created_at),
+    createdAt: mapRowWithKeys(row, cols.createdAt),
   }));
 };
 
@@ -218,6 +220,11 @@ const Home: NextPage = () => {
   const subscribersFromList1 = api.subscriber.getAllFromList.useQuery({
     ListId: 1,
   });
+  const createManySubscribers = api.subscriber.createMany.useMutation({
+    onSuccess: () => {
+      console.log("Subscribers created");
+    },
+  });
 
   const [fileData, setFileData] = useState<string | null>(null);
   const [inputData, setInputData] = useState<string | null>(null);
@@ -225,7 +232,7 @@ const Home: NextPage = () => {
     name?: string | string[];
     email?: string | string[];
     subscribed?: string | string[];
-    created_at?: string | string[];
+    createdAt?: string | string[];
   }>({});
 
   return (
@@ -267,33 +274,6 @@ const Home: NextPage = () => {
           >
             add list "test-list"
           </button> */}
-        </div>
-
-        <div>
-          <p>ADD SUBSCRIBER TO LIST 1</p>
-          <button
-            onClick={async () => {
-              const temp = createSubscriber.mutate({
-                name: "test-subscriber",
-                email: "igor@test.com",
-                ListId: 1,
-                subscribed: true,
-                createdAt: new Date(),
-              });
-              console.log({ temp });
-            }}
-          >
-            add test-subscriber to list 1
-          </button>
-
-          <div>
-            <p>subscribers from list 1:</p>
-            {subscribersFromList1.data?.map((subscriber) => (
-              <p key={subscriber.email}>
-                {subscriber.name} - {subscriber.email}
-              </p>
-            ))}
-          </div>
         </div>
 
         <div className="flex gap-2">
@@ -355,6 +335,33 @@ const Home: NextPage = () => {
               </div>
             ))}
           </form>
+        </div>
+
+        <div>
+          <button
+            onClick={() => {
+              const data = mapCsvProperties(
+                csvToJson(inputData || "").data,
+                columnOverrides
+              ).map((subscriber) => ({
+                ...subscriber,
+                subscribed: subscriber.subscribed === "true",
+                createdAt: new Date(subscriber.createdAt),
+                ListId: 2,
+              }));
+
+              if (data.length === 0) return;
+              z.array(subscriberSchema).parse(data);
+
+              createManySubscribers.mutate(data, {
+                onSuccess: () => {
+                  console.log("Subscribers created");
+                },
+              });
+            }}
+          >
+            UPLOAD data from input
+          </button>
         </div>
 
         <div className="flex gap-6 bg-gray-200">
