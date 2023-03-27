@@ -230,6 +230,33 @@ const Lists = () => {
 
   return <>Unreachable (I think)</>;
 };
+
+const SubscriberSection = () => {
+  return (
+    <section>
+      <h2>SUBSCRIBERS</h2>
+      <Subscribers />
+    </section>
+  );
+};
+
+const Subscribers = () => {
+  const {
+    data: subscribers,
+    error,
+    isLoading,
+  } = api.subscriber.getAll.useQuery();
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error.message}</p>;
+  if (subscribers) {
+    if (subscribers.length === 0) return <p>No subscribers</p>;
+    return <pre>{JSON.stringify(subscribers, null, 2)}</pre>;
+  }
+
+  return <>Unreachable (I think)</>;
+};
+
 const Home: NextPage = () => {
   const createList = api.list.create.useMutation();
   const createSubscriber = api.subscriber.create.useMutation({
@@ -279,17 +306,7 @@ const Home: NextPage = () => {
 
         <ListSection />
 
-          {/* <button
-            onClick={async () => {
-              const temp = await createList.mutateAsync({
-                name: "test-list",
-              });
-              console.log({ temp });
-            }}
-          >
-            add list "test-list"
-          </button> */}
-        </div>
+        <SubscriberSection />
 
         <div className="flex gap-2">
           <form
