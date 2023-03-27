@@ -210,6 +210,14 @@ const mapCsvProperties = (
 const Home: NextPage = () => {
   const lists = api.list.getAll.useQuery();
   const createList = api.list.create.useMutation();
+  const createSubscriber = api.subscriber.create.useMutation({
+    onSuccess: () => {
+      console.log("Subscriber created");
+    },
+  });
+  const subscribersFromList1 = api.subscriber.getAllFromList.useQuery({
+    ListId: 1,
+  });
 
   const [fileData, setFileData] = useState<string | null>(null);
   const [inputData, setInputData] = useState<string | null>(null);
@@ -259,6 +267,33 @@ const Home: NextPage = () => {
           >
             add list "test-list"
           </button> */}
+        </div>
+
+        <div>
+          <p>ADD SUBSCRIBER TO LIST 1</p>
+          <button
+            onClick={async () => {
+              const temp = createSubscriber.mutate({
+                name: "test-subscriber",
+                email: "igor@test.com",
+                ListId: 1,
+                subscribed: true,
+                createdAt: new Date(),
+              });
+              console.log({ temp });
+            }}
+          >
+            add test-subscriber to list 1
+          </button>
+
+          <div>
+            <p>subscribers from list 1:</p>
+            {subscribersFromList1.data?.map((subscriber) => (
+              <p key={subscriber.email}>
+                {subscriber.name} - {subscriber.email}
+              </p>
+            ))}
+          </div>
         </div>
 
         <div className="flex gap-2">

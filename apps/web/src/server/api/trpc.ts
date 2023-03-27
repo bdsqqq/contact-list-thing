@@ -58,6 +58,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
+  //  [ ] Daily: using superjson here allows for weird stuff like Date but adds a bit of overhead. Can be removed, and probably will be.
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
