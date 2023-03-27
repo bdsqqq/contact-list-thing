@@ -283,7 +283,7 @@ const Home: NextPage = () => {
               console.log({ temp });
             }}
           >
-            add subscriber "test-subscriber" to list 1
+            add test-subscriber to list 1
           </button>
 
           <div>
