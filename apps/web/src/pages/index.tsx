@@ -170,6 +170,17 @@ const mapCsvProperties = (
     keys: string[]
   ) => {
     return keys.reduce((acc, key) => {
+      if (row.get(key) === undefined) {
+        // TODO: This should throw but I don't wanna try catch rn, logging instead
+        // throw new Error(
+        //   `The key ${key} does not exist in the row ${JSON.stringify(row)}`
+        // );
+        console.error(
+          `The key ${key} does not exist in the row ${JSON.stringify(row)}`
+        );
+        return "";
+      }
+
       acc += ` ${row.get(key)}`;
       return acc.trim();
     }, "");
