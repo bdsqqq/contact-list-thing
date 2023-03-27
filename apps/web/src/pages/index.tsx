@@ -208,7 +208,9 @@ const mapCsvProperties = (
 };
 
 const Home: NextPage = () => {
-  const hello = api.example.getAll.useQuery();
+  const lists = api.list.getAll.useQuery();
+  const createList = api.list.create.useMutation();
+
   const [fileData, setFileData] = useState<string | null>(null);
   const [inputData, setInputData] = useState<string | null>(null);
   const [columnOverrides, setColumnOverrides] = useState<{
@@ -239,6 +241,25 @@ const Home: NextPage = () => {
             reader.readAsText(file);
           }}
         />
+
+        <div>
+          <p>LISTS</p>
+
+          {lists.isLoading && <p>Loading...</p>}
+          {lists.isError && <p>{lists.error.message}</p>}
+          {lists.data && <pre>{JSON.stringify(lists.data, null, 2)}</pre>}
+
+          {/* <button
+            onClick={async () => {
+              const temp = await createList.mutateAsync({
+                name: "test-list",
+              });
+              console.log({ temp });
+            }}
+          >
+            add list "test-list"
+          </button> */}
+        </div>
 
         <div className="flex gap-2">
           <form
