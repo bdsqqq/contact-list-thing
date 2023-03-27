@@ -21,8 +21,9 @@ model List {
 
 model Subscriber {
     // [ ] Daily: 
-    // TODO: is using email as PK here is a good idea? 
-    email       String      @id
+    // TODO: is using email as PK here is a good idea?
+    @@id([ email, ListId])
+    email       String      
     name        String
     subscribed  Boolean     
     createdAt   DateTime    @default(now())
