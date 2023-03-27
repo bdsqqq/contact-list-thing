@@ -95,6 +95,7 @@ const overrides = [
     key: "first_name",
     description: "first_name -> name",
     overrides: {
+      // [ ] DAILY: this is the structure of the "overrides". 1 to n > 0 allows the consumer to do something like `first_name` -> `name` or `first_name` + `last_name` -> `name`
       name: "first_name",
     },
   },
@@ -132,6 +133,8 @@ const csvToJson = (csv: string) => {
 
       return columns.reduce((acc, header, index) => {
         if (columns.length !== values.length) {
+          // [ ] DAILY: Validate this in the backend too, but display it in the UI. Maybe even let the user "fix" these by adding the missing columns or removing the row?
+          // TODO: keep track of these somewhere and display them. This should prevent the user from uploading to DB.
           console.error(
             `The number of columns (${columns.length}) does not match the number of values (${values.length})`
           );
