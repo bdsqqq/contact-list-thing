@@ -38,6 +38,6 @@ export const subscriberRouter = createTRPCRouter({
       });
     }),
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.list.findMany();
+    return ctx.prisma.subscriber.findMany();
   }),
 });
