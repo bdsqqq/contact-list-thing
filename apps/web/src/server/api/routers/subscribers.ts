@@ -9,14 +9,18 @@ export const subscriberRouter = createTRPCRouter({
         email: z.string().email(),
         name: z.string(),
         subscribed: z.boolean(),
-        createdAt: z.date(),
+        createdAt: z.date().optional(),
         ListId: z.number().int(),
       })
     )
     .mutation(({ input, ctx }) => {
-      return ctx.prisma.list.create({
+      return ctx.prisma.subscriber.create({
         data: {
+          email: input.email,
+          subscribed: input.subscribed,
           name: input.name,
+          createdAt: input.createdAt,
+          ListId: input.ListId,
         },
       });
     }),
