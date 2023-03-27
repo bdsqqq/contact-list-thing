@@ -2,13 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-const subscriberSchema = z.object({
-  email: z.string().email(),
-  name: z.string(),
-  subscribed: z.boolean(),
-  createdAt: z.date().optional(),
-  ListId: z.number().int(),
-});
+import { subscriberSchema } from "~/utils/validators";
 
 export const subscriberRouter = createTRPCRouter({
   create: publicProcedure.input(subscriberSchema).mutation(({ input, ctx }) => {
@@ -22,11 +16,12 @@ export const subscriberRouter = createTRPCRouter({
       },
     });
   }),
-  createMultiple: publicProcedure
-    .input(z.array(subscriberSchema).nonempty())
+  createMany: publicProcedure
+    .input(z.array(subscriberSchema))
     .mutation(({ input, ctx }) => {
       return ctx.prisma.subscriber.createMany({
         data: input,
+        skipDuplicates: true,
       });
     }),
   getAllFromList: publicProcedure
