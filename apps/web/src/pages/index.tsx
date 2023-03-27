@@ -209,8 +209,28 @@ const mapCsvProperties = (
   }));
 };
 
+const ListSection = () => {
+  return (
+    <section>
+      <h2>LISTS</h2>
+      <Lists />
+    </section>
+  );
+};
+
+const Lists = () => {
+  const { data: lists, error, isLoading } = api.list.getAll.useQuery();
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error.message}</p>;
+  if (lists) {
+    if (lists.length === 0) return <p>No lists</p>;
+    return <pre>{JSON.stringify(lists, null, 2)}</pre>;
+  }
+
+  return <>Unreachable (I think)</>;
+};
 const Home: NextPage = () => {
-  const lists = api.list.getAll.useQuery();
   const createList = api.list.create.useMutation();
   const createSubscriber = api.subscriber.create.useMutation({
     onSuccess: () => {
@@ -257,12 +277,7 @@ const Home: NextPage = () => {
           }}
         />
 
-        <div>
-          <p>LISTS</p>
-
-          {lists.isLoading && <p>Loading...</p>}
-          {lists.isError && <p>{lists.error.message}</p>}
-          {lists.data && <pre>{JSON.stringify(lists.data, null, 2)}</pre>}
+        <ListSection />
 
           {/* <button
             onClick={async () => {
