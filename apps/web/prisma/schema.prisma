@@ -10,8 +10,23 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model List {
+    id          Int         @id @default(autoincrement())
+    name        String
+    subscribers Subscriber[]
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+}
+
+
+model Subscriber {
+    // [ ] Daily: 
+    // TODO: is using email as PK here is a good idea? 
+    email       String      @id
+    name        String
+    subscribed  Boolean     
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt       
+    List        List        @relation(fields: [ListId], references: [id])
+    ListId      Int
 }
