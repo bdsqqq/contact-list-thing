@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { z } from "zod";
-import { csvToJson, mapCsvProperties, mockData, overrides } from "~/pages";
 import { api } from "~/utils/api";
+import { csvToJson, mapCsvProperties } from "~/utils/csv";
+import { mockData, overrides } from "~/utils/mockData";
 import { subscriberSchema } from "~/utils/schemas";
 
 const Upload = () => {
