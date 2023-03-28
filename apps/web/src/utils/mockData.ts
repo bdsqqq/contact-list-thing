@@ -79,7 +79,17 @@ export const mockData = {
    `,
 };
 
-export const overrides = [
+export const overrides: {
+  key: string;
+  description: string;
+  overrides: {
+    // TODO: this should come from the schema but it's mock data so it's fine
+    name?: string | string[];
+    email?: string | string[];
+    subscribed?: string | string[];
+    created_at?: string | string[];
+  };
+}[] = [
   {
     key: "none",
     description: "None",
