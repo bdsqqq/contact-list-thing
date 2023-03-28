@@ -37,8 +37,8 @@ export const Shell = ({
                 {title ||
                   routes.find((route) => route.path === asPath)?.name ||
                   "hmm..."}
-                {actions}
               </h1>
+              {actions}
             </div>
             {children}
           </main>
