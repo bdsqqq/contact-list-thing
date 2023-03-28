@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-import { subscriberSchema } from "~/utils/validators";
+import { subscriberSchema } from "~/utils/schemas";
 
 export const subscriberRouter = createTRPCRouter({
   create: publicProcedure.input(subscriberSchema).mutation(({ input, ctx }) => {

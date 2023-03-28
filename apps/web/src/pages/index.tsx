@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { z } from "zod";
-import { subscriberSchema } from "~/utils/validators";
+import { subscriberSchema } from "~/utils/schemas";
 
 import { api } from "~/utils/api";
 
