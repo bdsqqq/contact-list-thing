@@ -40,7 +40,7 @@ export const Shell = ({
               </h1>
               {actions}
             </div>
-            {children}
+            <div className="mx-auto max-w-5xl px-6">{children}</div>
           </main>
         </div>
       </div>
