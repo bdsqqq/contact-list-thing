@@ -5,6 +5,7 @@ import { z } from "zod";
 import { subscriberSchema } from "~/utils/schemas";
 
 import { api } from "~/utils/api";
+import { Subscribers } from "~/components/Subscribers";
 
 const mockData = {
   expected: `
@@ -231,32 +232,6 @@ const Lists = () => {
   return <>Unreachable (I think)</>;
 };
 
-const SubscriberSection = () => {
-  return (
-    <section>
-      <h2>SUBSCRIBERS</h2>
-      <Subscribers />
-    </section>
-  );
-};
-
-const Subscribers = () => {
-  const {
-    data: subscribers,
-    error,
-    isLoading,
-  } = api.subscriber.getAll.useQuery();
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>{error.message}</p>;
-  if (subscribers) {
-    if (subscribers.length === 0) return <p>No subscribers</p>;
-    return <pre>{JSON.stringify(subscribers, null, 2)}</pre>;
-  }
-
-  return <>Unreachable (I think)</>;
-};
-
 const UploadSection = () => {
   return (
     <section>
@@ -424,7 +399,12 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex flex-col gap-8 p-8">
         <ListSection />
-        <SubscriberSection />
+
+        <section>
+          <h2>SUBSCRIBERS</h2>
+          <Subscribers />
+        </section>
+
         <UploadSection />
       </main>
     </>
