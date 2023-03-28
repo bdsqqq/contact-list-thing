@@ -1,9 +1,16 @@
 import Link from "next/link";
+import { ReactNode } from "react";
 
-export const Shell = () => {
+export const Shell = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex">
       <Sidebar />
+      <div className="w-full">
+        <Topbar />
+        <div className="h-[calc(100vh-60px)] overflow-auto pb-10">
+          {children}
+        </div>
+      </div>
     </div>
   );
 };
@@ -13,7 +20,7 @@ const Sidebar = () => {
     <aside className="border-slate-6 flex h-screen w-[250px] flex-shrink-0 flex-col justify-between border-r">
       <Navigation />
       <div className="py-6 px-4">
-        <AccontButton />
+        <AccountButton />
       </div>
     </aside>
   );
@@ -55,11 +62,26 @@ const Navigation = () => {
   );
 };
 
-const AccontButton = () => {
+const AccountButton = () => {
   return (
     <div className="flex flex-1 items-center gap-3 overflow-hidden">
       <div className="bg-slate-8 h-6 w-6 rounded-full" />
       <span className="truncate">igorbedesqui@gmail.com</span>
+    </div>
+  );
+};
+
+const Topbar = () => {
+  return (
+    <div className="border-slate-6 flex h-[60px] items-center justify-end border-b px-6">
+      <div className="flex gap-3">
+        <div className="bg-slate-4 border-slate-6 text-slate-11 inline-flex h-8 select-none items-center justify-center gap-1 rounded-md border pl-2 pr-3 text-sm font-semibold">
+          Hej
+        </div>
+        <div className="bg-slate-4 border-slate-6 text-slate-11 inline-flex h-8 select-none items-center justify-center gap-1 rounded-md border pl-2 pr-3 text-sm font-semibold">
+          Do
+        </div>
+      </div>
     </div>
   );
 };
