@@ -25,6 +25,7 @@ export default {
       current: "currentColor",
       black: "#000",
       white: "#fff",
+      root: "rgb(5, 5, 10)",
       slate: numberfyRadixColorNames(slate),
       mint: numberfyRadixColorNames(mint),
     },
