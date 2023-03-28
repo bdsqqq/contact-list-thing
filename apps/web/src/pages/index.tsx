@@ -1,14 +1,11 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import { z } from "zod";
-import { subscriberSchema } from "~/utils/schemas";
 
-import { api } from "~/utils/api";
 import { Subscribers } from "~/components/Subscribers";
 import { ContactLists } from "~/components/ContactLists";
+import { Upload } from "~/components/Upload";
 
-const mockData = {
+export const mockData = {
   expected: `
   name,email,subscribed,created_at
   John Doe,johndoe@resend.com,true,2022-01-01
@@ -89,7 +86,7 @@ const mockData = {
   `,
 };
 
-const overrides = [
+export const overrides = [
   {
     key: "none",
     description: "None",
@@ -112,7 +109,7 @@ const overrides = [
   },
 ];
 
-const csvToJson = (csv: string) => {
+export const csvToJson = (csv: string) => {
   const lines = csv
     .trim()
     .split(/\n/)
@@ -153,7 +150,7 @@ const csvToJson = (csv: string) => {
 };
 
 // I know I'll always want a particular schema, so it's easier to start from there
-const mapCsvProperties = (
+export const mapCsvProperties = (
   data: Map<string, string>[],
   columnOverrides?: {
     name?: string | string[];
@@ -211,163 +208,6 @@ const mapCsvProperties = (
   }));
 };
 
-const UploadSection = () => {
-  return (
-    <section>
-      <h2>UPLOAD</h2>
-      <Upload />
-    </section>
-  );
-};
-
-const Upload = () => {
-  const [fileData, setFileData] = useState<string>("");
-  const [inputData, setInputData] = useState<string>("");
-  const [columnOverrides, setColumnOverrides] = useState<{
-    name?: string | string[];
-    email?: string | string[];
-    subscribed?: string | string[];
-    createdAt?: string | string[];
-  }>({});
-  const createManySubscribers = api.subscriber.createMany.useMutation();
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result;
-      if (typeof text === "string") {
-        setFileData(text);
-      }
-    };
-    reader.readAsText(file);
-  };
-
-  return (
-    <>
-      <input type="file" onChange={handleFileChange} />
-
-      <div className="flex gap-4 [&>*]:bg-gray-200">
-        <div>
-          <h3>What csv to parse</h3>
-          {Object.entries(mockData).map(([key, value]) => (
-            <div key={key}>
-              <input
-                type="radio"
-                id={key}
-                name="mockData"
-                value={value}
-                onChange={(e) => {
-                  setInputData(e.target.value);
-                }}
-              />
-              <label htmlFor={key}>{key}</label>
-            </div>
-          ))}
-          <div key={"file"}>
-            <input
-              type="radio"
-              id={"file"}
-              name="mockData"
-              value={"file"}
-              onChange={(e) => {
-                setInputData(fileData);
-              }}
-            />
-            <label htmlFor={"file"}>File data</label>
-          </div>
-        </div>
-        <div>
-          <h2>What override to use when mapping</h2>
-          {overrides.map((override, i) => (
-            <div key={override.key}>
-              <input
-                type="radio"
-                id={override.key}
-                name="columnOverrides"
-                value={i}
-                onChange={(e) => {
-                  setColumnOverrides(
-                    overrides[parseInt(e.target.value)]?.overrides || {}
-                  );
-                }}
-              />
-              <label htmlFor={override.key}>{override.description}</label>
-            </div>
-          ))}
-        </div>
-      </div>
-      <button
-        onClick={() => {
-          const data = mapCsvProperties(
-            csvToJson(inputData || "").data,
-            columnOverrides
-          ).map((subscriber) => ({
-            ...subscriber,
-            subscribed: subscriber.subscribed === "true",
-            createdAt: new Date(subscriber.createdAt),
-            ListId: 2,
-          }));
-
-          if (data.length === 0) return;
-          z.array(subscriberSchema).parse(data);
-
-          createManySubscribers.mutate(data, {
-            onSuccess: () => {
-              console.log("Subscribers created");
-            },
-          });
-        }}
-      >
-        UPLOAD CSV DATA
-      </button>
-
-      <PreviewInputAndOutput
-        input={inputData}
-        columnOverrides={columnOverrides}
-      />
-    </>
-  );
-};
-
-const PreviewInputAndOutput = ({
-  input,
-  columnOverrides,
-}: {
-  input: string;
-  columnOverrides: {
-    name?: string | string[];
-    email?: string | string[];
-    subscribed?: string | string[];
-    createdAt?: string | string[];
-  };
-}) => {
-  return (
-    <div className="flex gap-6 bg-gray-200">
-      <div className="bg-gray-300">
-        <h2>input</h2>
-        <pre>
-          <code>{input && input}</code>
-        </pre>
-      </div>
-      <div className="bg-gray-300">
-        <h2>output</h2>
-        <pre>
-          <code>
-            {JSON.stringify(
-              mapCsvProperties(csvToJson(input || "").data, columnOverrides),
-              null,
-              2
-            )}
-          </code>
-        </pre>
-      </div>
-    </div>
-  );
-};
-
 const Home: NextPage = () => {
   return (
     <>
@@ -387,7 +227,10 @@ const Home: NextPage = () => {
           <Subscribers />
         </section>
 
-        <UploadSection />
+        <section>
+          <h2>UPLOAD</h2>
+          <Upload />
+        </section>
       </main>
     </>
   );
