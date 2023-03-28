@@ -15,7 +15,7 @@ const ContactListsPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell actions={<button>New</button>}>
-        <main className="flex flex-col gap-8 p-8">
+        <div className="flex flex-col gap-8">
           <section>
             <h2>LISTS</h2>
             <ContactLists />
@@ -30,7 +30,7 @@ const ContactListsPage: NextPage = () => {
             <h2>UPLOAD</h2>
             <Upload />
           </section>
-        </main>
+        </div>
       </Shell>
     </>
   );

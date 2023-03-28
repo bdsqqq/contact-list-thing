@@ -12,9 +12,7 @@ const Empty: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell>
-        <main className="flex flex-col gap-8 p-8">
-          Nothing to see here, lol.
-        </main>
+        <div className="flex flex-col gap-8">Nothing to see here, lol.</div>
       </Shell>
     </>
   );
