@@ -27,7 +27,7 @@ export const Shell = ({
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar activeRoute={asPath} />
       <div className="w-full">
         <Topbar />
         <div className="h-[calc(100vh-60px)] overflow-auto pb-10">
@@ -48,10 +48,10 @@ export const Shell = ({
   );
 };
 
-const Sidebar = () => {
+const Sidebar = ({ activeRoute }: { activeRoute?: string }) => {
   return (
     <aside className="border-slate-6 flex h-screen w-[250px] flex-shrink-0 flex-col justify-between border-r">
-      <Navigation />
+      <Navigation activeRoute={activeRoute} />
       <div className="py-6 px-4">
         <AccountButton />
       </div>
@@ -59,7 +59,7 @@ const Sidebar = () => {
   );
 };
 
-const Navigation = () => {
+const Navigation = ({ activeRoute }: { activeRoute?: string }) => {
   return (
     <div>
       <div className="flex h-[60px] items-center px-4">
@@ -72,7 +72,14 @@ const Navigation = () => {
           {routes.map((route) => (
             <li key={route.name}>
               <Link className="h-8 rounded-md" href={route.path}>
-                <span className="text-slate-11 hover:bg-slate-5 hover:text-gray-12 flex h-8 items-center gap-2 rounded-md px-2 text-sm">
+                <span
+                  className={
+                    activeRoute === route.path
+                      ? // TODO: variants???
+                        "bg-slate-6 text-slate-12 flex h-8 items-center gap-2 rounded-md px-2 text-sm"
+                      : "text-slate-11 hover:bg-slate-5 hover:text-gray-12 flex h-8 items-center gap-2 rounded-md px-2 text-sm"
+                  }
+                >
                   {route.name}
                 </span>
               </Link>
