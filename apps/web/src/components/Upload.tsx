@@ -34,7 +34,7 @@ const Upload = () => {
     <>
       <input type="file" onChange={handleFileChange} />
 
-      <div className="flex gap-4 [&>*]:bg-gray-200">
+      <div className="flex gap-4 [&>*]:bg-slate-2">
         <div>
           <h3>What csv to parse</h3>
           {Object.entries(mockData).map(([key, value]) => (
@@ -130,14 +130,14 @@ const PreviewInputAndOutput = ({
   };
 }) => {
   return (
-    <div className="flex gap-6 bg-gray-200">
-      <div className="bg-gray-300">
+    <div className="flex gap-6 bg-slate-2">
+      <div className="bg-slate-3">
         <h2>input</h2>
         <pre>
           <code>{input && input}</code>
         </pre>
       </div>
-      <div className="bg-gray-300">
+      <div className="bg-slate-3">
         <h2>output</h2>
         <pre>
           <code>
