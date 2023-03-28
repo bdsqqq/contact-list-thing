@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import type { ReactNode } from "react";
 
 const routes = [
@@ -22,6 +23,8 @@ export const Shell = ({
   // TODO: take an object with label, icon, onClick. Handle if it should render a button or a popover with more actions and stuff. I have this on other project but don't really wanna spend the time bringing it here. Allowing the consumer to pass what it wants is good enough for now.
   actions?: ReactNode;
 }) => {
+  const { asPath } = useRouter();
+
   return (
     <div className="flex">
       <Sidebar />
@@ -31,7 +34,9 @@ export const Shell = ({
           <main>
             <div className="mx-auto flex max-w-5xl items-center justify-between py-8 px-6">
               <h1 className="text-slate-12 text-[28px] font-bold leading-[34px] tracking-[-0.416px]">
-                {title || routes[0]?.name}
+                {title ||
+                  routes.find((route) => route.path === asPath)?.name ||
+                  "hmm..."}
                 {actions}
               </h1>
             </div>
