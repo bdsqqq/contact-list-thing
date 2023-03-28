@@ -6,6 +6,7 @@ import { subscriberSchema } from "~/utils/schemas";
 
 import { api } from "~/utils/api";
 import { Subscribers } from "~/components/Subscribers";
+import { ContactLists } from "~/components/ContactLists";
 
 const mockData = {
   expected: `
@@ -210,28 +211,6 @@ const mapCsvProperties = (
   }));
 };
 
-const ListSection = () => {
-  return (
-    <section>
-      <h2>LISTS</h2>
-      <Lists />
-    </section>
-  );
-};
-
-const Lists = () => {
-  const { data: lists, error, isLoading } = api.list.getAll.useQuery();
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>{error.message}</p>;
-  if (lists) {
-    if (lists.length === 0) return <p>No lists</p>;
-    return <pre>{JSON.stringify(lists, null, 2)}</pre>;
-  }
-
-  return <>Unreachable (I think)</>;
-};
-
 const UploadSection = () => {
   return (
     <section>
@@ -398,7 +377,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col gap-8 p-8">
-        <ListSection />
+        <section>
+          <h2>LISTS</h2>
+          <ContactLists />
+        </section>
 
         <section>
           <h2>SUBSCRIBERS</h2>
