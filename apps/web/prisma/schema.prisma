@@ -20,7 +20,7 @@ model List {
 
 
 model Subscriber {
-    // [ ] Daily: 
+    // [x] Daily: 
     // TODO: is using email as PK here is a good idea?
     @@id([ email, ListId])
     email       String      

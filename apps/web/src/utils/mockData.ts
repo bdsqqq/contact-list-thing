@@ -99,7 +99,7 @@ export const overrides: {
     key: "first_name",
     description: "first_name -> name",
     overrides: {
-      // [ ] DAILY: this is the structure of the "overrides". 1 to n > 0 allows the consumer to do something like `first_name` -> `name` or `first_name` + `last_name` -> `name`
+      // [x] DAILY: this is the structure of the "overrides". 1 to n > 0 allows the consumer to do something like `first_name` -> `name` or `first_name` + `last_name` -> `name`
       name: "first_name",
     },
   },

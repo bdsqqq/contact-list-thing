@@ -5,6 +5,6 @@ export const subscriberSchema = z.object({
   name: z.string(),
   subscribed: z.boolean(),
   createdAt: z.date().optional(),
-  // [ ] Daily: TODO: Should listId live here? It feels right to add(subscribers) but add(subscribers, listId) makes sense too
+  // [x] Daily: TODO: Should listId live here? It feels right to add(subscribers) but add(subscribers, listId) makes sense too
   ListId: z.number().int(),
 });

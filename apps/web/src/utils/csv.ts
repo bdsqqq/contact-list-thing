@@ -23,7 +23,7 @@ export const csvToJson = (csv: string) => {
 
       return columns.reduce((acc, header, index) => {
         if (columns.length !== values.length) {
-          // [ ] DAILY: Validate this in the backend too, but display it in the UI. Maybe even let the user "fix" these by adding the missing columns or removing the row?
+          // [x] DAILY: Validate this in the backend too, but display it in the UI. Maybe even let the user "fix" these by adding the missing columns or removing the row?
           // TODO: keep track of these somewhere and display them. This should prevent the user from uploading to DB.
           console.error(
             `The number of columns (${columns.length}) does not match the number of values (${values.length})`
