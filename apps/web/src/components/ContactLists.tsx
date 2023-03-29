@@ -21,8 +21,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import Link from "next/link";
+import { formatDistance } from "date-fns";
 
 const columnHelper = createColumnHelper<List>();
+const now = new Date();
 
 const columns = [
   columnHelper.accessor((row) => row.name, {
@@ -35,9 +37,14 @@ const columns = [
       </Link>
     ),
   }),
-  // columnHelper.accessor("createdAt", {
-  //  cell: (info) => info.getValue(),
-  // }),
+  columnHelper.accessor("createdAt", {
+    id: "created",
+    header: "Created",
+    cell: (info) =>
+      formatDistance(info.getValue(), now, {
+        addSuffix: true,
+      }),
+  }),
   columnHelper.display({
     id: "actions",
     cell: (props) => (
@@ -54,6 +61,7 @@ const columns = [
 
 const headerWidths = {
   name: "500px",
+  created: "500px",
   actions: "0px",
 };
 
@@ -71,7 +79,10 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <th
-                className="border-slate-6 text-slate-11 h-8 border-t border-b px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r"
+                className={`
+                border-slate-6 text-slate-11 h-8 border-t border-b px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
+                ${header.id === "created" ? " text-right" : ""}
+                `}
                 style={{
                   width:
                     headerWidths[
@@ -96,7 +107,8 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
           <tr key={row.id}>
             {row.getVisibleCells().map((cell) => (
               <td
-                className="border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm"
+                className={`border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm 
+                ${cell.column.id === "created" ? " text-right" : ""}`}
                 key={cell.id}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
