@@ -79,7 +79,7 @@ const Navigation = ({ activeRoute }: { activeRoute?: string }) => {
               <Link className="h-8 rounded-md" href={route.path}>
                 <span
                   className={
-                    activeRoute === route.path
+                    activeRoute?.includes(route.path)
                       ? // TODO: variants???
                         "bg-slate-6 text-slate-12 flex h-8 items-center gap-2 rounded-md px-2 text-sm"
                       : "text-slate-11 hover:bg-slate-5 hover:text-gray-12 flex h-8 items-center gap-2 rounded-md px-2 text-sm"
