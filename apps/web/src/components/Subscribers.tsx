@@ -41,6 +41,11 @@ const columns = [
     id: "email",
     cell: (props) => props.getValue(),
   }),
+  columnHelper.accessor((row) => row.subscribed, {
+    header: "Subscribed",
+    id: "subscribed",
+    cell: (props) => (props.getValue() ? "Yes" : "No"),
+  }),
   columnHelper.accessor("createdAt", {
     id: "created",
     header: "Created",
@@ -66,6 +71,7 @@ const columns = [
 const headerWidths = {
   name: "500px",
   email: "500px",
+  subscribed: "100px",
   created: "500px",
   actions: "0px",
 };
@@ -89,7 +95,7 @@ const SubscribersTable = ({
             {headerGroup.headers.map((header) => (
               <th
                 className={`
-                border-slate-6 text-slate-11 h-8 border-t border-b px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
+                border-slate-6 text-slate-11 h-8 border-b border-t px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
                 ${header.id === "created" ? " text-right" : ""}
                 `}
                 style={{
