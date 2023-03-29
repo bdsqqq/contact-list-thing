@@ -5,8 +5,13 @@ import { Subscribers } from "~/components/Subscribers";
 import { ContactLists } from "~/components/ContactLists";
 import { Upload } from "~/components/Upload";
 import { Shell } from "~/components/Shell";
+import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
+  const { data, isLoading, error } = api.list.getByName.useQuery({
+    name: "tost",
+  });
+
   return (
     <>
       <Head>
@@ -16,7 +21,16 @@ const Home: NextPage = () => {
       </Head>
       <Shell>
         <div className="flex flex-col gap-8">
-          <section>
+          <>
+            {isLoading && <p>Loading...</p>}
+            {error && <p>Error: {error.message}</p>}
+            {data && (
+              <pre>
+                <code>{JSON.stringify(data, null, 2)}</code>
+              </pre>
+            )}
+          </>
+          {/* <section>
             <h2>LISTS</h2>
             <ContactLists />
           </section>
@@ -29,7 +43,7 @@ const Home: NextPage = () => {
           <section>
             <h2>UPLOAD</h2>
             <Upload />
-          </section>
+          </section> */}
         </div>
       </Shell>
     </>

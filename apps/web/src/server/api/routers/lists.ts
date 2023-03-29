@@ -25,6 +25,15 @@ export const listRouter = createTRPCRouter({
         },
       });
     }),
+  getByName: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.$queryRaw`
+        SELECT *
+        FROM "List"
+        ORDER BY SIMILARITY(name,'${input.name}') DESC
+        LIMIT 5;`;
+    }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.list.findMany({
       take: 10,
