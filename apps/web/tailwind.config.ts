@@ -33,7 +33,30 @@ export default {
       slate: numberfyRadixColorNames(slate),
       green: numberfyRadixColorNames(mint),
     },
-    extend: {},
+    extend: {
+      animation: {
+        "fade-in": "fade-in .2s ease",
+        "fade-out": "fade-out .2s ease",
+      },
+      keyframes: {
+        "fade-in": {
+          "0%": {
+            opacity: "0",
+          },
+          "100%": {
+            opacity: "1",
+          },
+        },
+        "fade-out": {
+          "0%": {
+            opacity: "1",
+          },
+          "100%": {
+            opacity: "0",
+          },
+        },
+      },
+    },
   },
   plugins: [],
 } satisfies Config;
