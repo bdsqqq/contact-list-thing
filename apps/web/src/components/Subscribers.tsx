@@ -1,5 +1,6 @@
 import { api } from "~/utils/api";
 import type { Subscriber } from "@prisma/client";
+import type { ReactNode } from "react";
 
 export const Subscribers = ({ listid }: { listid: number }) => {
   const {
@@ -24,7 +25,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Link from "next/link";
 import { formatDistance } from "date-fns";
 
 const columnHelper = createColumnHelper<Subscriber>();
@@ -44,7 +44,11 @@ const columns = [
   columnHelper.accessor((row) => row.subscribed, {
     header: "Subscribed",
     id: "subscribed",
-    cell: (props) => (props.getValue() ? "Yes" : "No"),
+    cell: (props) => (
+      <Tag type={props.getValue() ? "success" : "base"}>
+        {props.getValue() ? "Yes" : "No"}
+      </Tag>
+    ),
   }),
   columnHelper.accessor("createdAt", {
     id: "created",
@@ -96,7 +100,11 @@ const SubscribersTable = ({
               <th
                 className={`
                 border-slate-6 text-slate-11 h-8 border-b border-t px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
-                ${header.id === "created" ? " text-right" : ""}
+                ${
+                  ["created", "subscribed"].includes(header.id)
+                    ? " text-right"
+                    : ""
+                }
                 `}
                 style={{
                   width:
@@ -123,7 +131,11 @@ const SubscribersTable = ({
             {row.getVisibleCells().map((cell) => (
               <td
                 className={`border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm 
-                ${cell.column.id === "created" ? " text-right" : ""}`}
+                ${
+                  ["created", "subscribed"].includes(cell.column.id)
+                    ? " text-right"
+                    : ""
+                }`}
                 key={cell.id}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -149,5 +161,28 @@ const SubscribersTable = ({
         ))}
       </tfoot>
     </table>
+  );
+};
+
+const Tag = ({
+  type = "base",
+  children,
+}: {
+  type?: "base" | "success";
+  children: ReactNode;
+}) => {
+  return (
+    <span
+      className={`
+      bg-green-3 text-green-11 inline-flex h-6 cursor-default select-none items-center whitespace-nowrap rounded px-2 text-xs font-semibold
+        ${
+          type === "base"
+            ? "bg-slate-2 text-slate-9"
+            : "bg-green-3 text-green-11"
+        }
+      `}
+    >
+      {children}
+    </span>
   );
 };
