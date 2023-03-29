@@ -7,6 +7,15 @@ import { Upload } from "~/components/Upload";
 import { Shell } from "~/components/Shell";
 import { api } from "~/utils/api";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/Dialog";
+
 const Home: NextPage = () => {
   const { data, isLoading, error } = api.list.getByName.useQuery({
     name: "tost",
@@ -30,6 +39,19 @@ const Home: NextPage = () => {
               </pre>
             )}
           </>
+
+          <Dialog>
+            <DialogTrigger>Open</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you sure absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
           {/* <section>
             <h2>LISTS</h2>
             <ContactLists />
