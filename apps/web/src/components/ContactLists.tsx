@@ -38,7 +38,24 @@ const columns = [
   // columnHelper.accessor("createdAt", {
   //  cell: (info) => info.getValue(),
   // }),
+  columnHelper.display({
+    id: "actions",
+    cell: (props) => (
+      <button
+        onClick={() => {
+          console.log(props.row.original);
+        }}
+      >
+        ...
+      </button>
+    ),
+  }),
 ];
+
+const headerWidths = {
+  name: "500px",
+  actions: "0px",
+};
 
 const ListsTable = ({ listsData }: { listsData: List[] }) => {
   const table = useReactTable({
@@ -55,6 +72,12 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
             {headerGroup.headers.map((header) => (
               <th
                 className="border-slate-6 text-slate-11 h-8 border-t border-b px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r"
+                style={{
+                  width:
+                    headerWidths[
+                      header.column.columnDef.id as keyof typeof headerWidths
+                    ],
+                }}
                 key={header.id}
               >
                 {header.isPlaceholder
