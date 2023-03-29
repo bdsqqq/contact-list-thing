@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --text-field-left-slot-width: 8px;
+  --text-field-right-slot-width: 8px;
+}
