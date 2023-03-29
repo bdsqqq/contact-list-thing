@@ -1,6 +1,10 @@
 import type { Config } from "tailwindcss";
 
-import { slateDarkA as slate, mintDarkA as mint } from "@radix-ui/colors";
+import {
+  slateDarkA as slate,
+  mintDarkA as mint,
+  blackA,
+} from "@radix-ui/colors";
 
 const onlyNumbers = (str: string) => str.replace(/[^0-9]/g, "");
 
@@ -23,7 +27,7 @@ export default {
     colors: {
       transparent: "transparent",
       current: "currentColor",
-      black: "#000",
+      black: numberfyRadixColorNames(blackA),
       white: "#fff",
       root: "rgb(5, 5, 10)",
       slate: numberfyRadixColorNames(slate),
