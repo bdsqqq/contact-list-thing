@@ -23,7 +23,7 @@ const Home: NextPage = () => {
 
           <section>
             <h2>SUBSCRIBERS</h2>
-            <Subscribers />
+            <Subscribers listid={1} />
           </section>
 
           <section>
