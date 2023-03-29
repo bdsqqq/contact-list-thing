@@ -16,10 +16,12 @@ const routes = [
 export const Shell = ({
   children,
   title,
+  details,
   actions,
 }: {
   children: ReactNode;
   title?: string;
+  details?: ReactNode;
   // TODO: take an object with label, icon, onClick. Handle if it should render a button or a popover with more actions and stuff. I have this on other project but don't really wanna spend the time bringing it here. Allowing the consumer to pass what it wants is good enough for now.
   actions?: ReactNode;
 }) => {
@@ -32,13 +34,16 @@ export const Shell = ({
         <Topbar />
         <div className="h-[calc(100vh-60px)] overflow-auto pb-10">
           <main>
-            <div className="mx-auto flex max-w-5xl items-center justify-between py-8 px-6">
-              <h1 className="text-slate-12 text-[28px] font-bold leading-[34px] tracking-[-0.416px]">
-                {title ||
-                  routes.find((route) => route.path === asPath)?.name ||
-                  "hmm..."}
-              </h1>
-              {actions}
+            <div className="mx-auto flex max-w-5xl flex-col py-8 px-6">
+              <div className="flex items-center justify-between">
+                <h1 className="text-slate-12 text-[28px] font-bold leading-[34px] tracking-[-0.416px]">
+                  {title ||
+                    routes.find((route) => route.path === asPath)?.name ||
+                    "hmm..."}
+                </h1>
+                {actions}
+              </div>
+              {details}
             </div>
             <div className="mx-auto max-w-5xl px-6">{children}</div>
           </main>
