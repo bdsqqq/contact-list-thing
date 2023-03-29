@@ -7,6 +7,7 @@ import { Shell } from "~/components/Shell";
 
 import { api } from "~/utils/api";
 import { formatDistance } from "date-fns";
+import { List } from "@prisma/client";
 
 const now = new Date();
 
@@ -29,26 +30,7 @@ const ContactListsPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell
-        details={
-          <div className="mt-8 flex w-full flex-wrap">
-            <div className="flex basis-1/4 flex-col gap-1">
-              <label className="text-slate-11 select-none text-sm uppercase">
-                Created
-              </label>
-              <span>
-                {isLoading ? (
-                  <div className="bg-slate-7 h-6 w-16 animate-pulse rounded-full" />
-                ) : data ? (
-                  formatDistance(data?.createdAt, now, {
-                    addSuffix: true,
-                  })
-                ) : (
-                  "N/A"
-                )}
-              </span>
-            </div>
-          </div>
-        }
+        details={<Details data={data} isLoading={isLoading} />}
         title={data?.name}
         actions={<button>Import contacts</button>}
       >
@@ -60,6 +42,48 @@ const ContactListsPage: NextPage = () => {
       </Shell>
     </>
   );
+};
+
+const Details = ({
+  data,
+  isLoading,
+}: {
+  data: List | undefined | null;
+  isLoading: boolean;
+}) => {
+  return (
+    <div className="mt-8 flex w-full flex-wrap">
+      <div className="flex basis-1/4 flex-col gap-1">
+        <label className="text-slate-11 select-none text-sm uppercase">
+          Created
+        </label>
+        <span>
+          <CreatedAtData data={data} isLoading={isLoading} />
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const CreatedAtData = ({
+  data,
+  isLoading,
+}: {
+  data: List | undefined | null;
+  isLoading: boolean;
+}) => {
+  if (isLoading)
+    return <div className="bg-slate-7 h-6 w-16 animate-pulse rounded-full" />;
+  if (data)
+    return (
+      <span>
+        {formatDistance(data?.createdAt, now, {
+          addSuffix: true,
+        })}
+      </span>
+    );
+
+  return <span>N/A</span>;
 };
 
 export default ContactListsPage;
