@@ -16,6 +16,15 @@ export const listRouter = createTRPCRouter({
         },
       });
     }),
+  getById: publicProcedure
+    .input(z.object({ id: z.number().int() }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.list.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.list.findMany({
       take: 10,
