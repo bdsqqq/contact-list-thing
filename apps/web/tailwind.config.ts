@@ -1,6 +1,10 @@
 import type { Config } from "tailwindcss";
 
-import { slateDarkA as slate, mintDarkA as mint } from "@radix-ui/colors";
+import {
+  slateDarkA as slate,
+  mintDarkA as mint,
+  blackA,
+} from "@radix-ui/colors";
 
 const onlyNumbers = (str: string) => str.replace(/[^0-9]/g, "");
 
@@ -23,13 +27,58 @@ export default {
     colors: {
       transparent: "transparent",
       current: "currentColor",
-      black: "#000",
+      black: numberfyRadixColorNames(blackA),
       white: "#fff",
       root: "rgb(5, 5, 10)",
       slate: numberfyRadixColorNames(slate),
       green: numberfyRadixColorNames(mint),
     },
-    extend: {},
+    extend: {
+      animation: {
+        "fade-in": "fade-in .2s ease",
+        "fade-out": "fade-out .2s ease",
+        "open-scale-in-fade": "open-scale-in-fade .2s ease",
+        "close-scale-out-fade": "close-scale-out-fade .2s ease",
+      },
+      keyframes: {
+        "fade-in": {
+          "0%": {
+            opacity: "0",
+          },
+          "100%": {
+            opacity: "1",
+          },
+        },
+        "fade-out": {
+          "0%": {
+            opacity: "1",
+          },
+          "100%": {
+            opacity: "0",
+          },
+        },
+        "open-scale-in-fade": {
+          "0%": {
+            opacity: "0",
+            transform: "scale(.98)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        "close-scale-out-fade": {
+          "0%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "scale(0)",
+          },
+        },
+      },
+    },
   },
   plugins: [],
 } satisfies Config;
