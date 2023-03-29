@@ -17,18 +17,7 @@ const ContactListsPage: NextPage = () => {
       <Shell actions={<button>New</button>}>
         <div className="flex flex-col gap-8">
           <section>
-            <h2>LISTS</h2>
             <ContactLists />
-          </section>
-
-          <section>
-            <h2>SUBSCRIBERS</h2>
-            <Subscribers />
-          </section>
-
-          <section>
-            <h2>UPLOAD</h2>
-            <Upload />
           </section>
         </div>
       </Shell>
