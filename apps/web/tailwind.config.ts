@@ -27,7 +27,7 @@ export default {
       white: "#fff",
       root: "rgb(5, 5, 10)",
       slate: numberfyRadixColorNames(slate),
-      mint: numberfyRadixColorNames(mint),
+      green: numberfyRadixColorNames(mint),
     },
     extend: {},
   },
