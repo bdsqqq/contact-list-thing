@@ -116,8 +116,10 @@ const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
         <CSVInputs fileData={fileData} setFileData={setFileData} />
       </div>
       <div className="flex items-center gap-2">
-        <button type="submit">Add</button>
-        <button type="button">Cancel</button>
+        <Button type="submit">Add</Button>
+        <Button variant="ghost" type="button">
+          Cancel
+        </Button>
       </div>
     </form>
   );
