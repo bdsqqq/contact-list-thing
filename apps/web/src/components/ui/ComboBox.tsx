@@ -18,12 +18,12 @@ import { inputVariants } from "~/components/ui/Input";
 type ComboboxProps = AriakitComboboxProps & VariantProps<typeof inputVariants>;
 
 const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, variant, ...props }, ref) => {
     return (
       <AriakitComboBox
         {...props}
         ref={ref}
-        className={cn(inputVariants(), className)}
+        className={cn(inputVariants({ variant }), className)}
       />
     );
   }
