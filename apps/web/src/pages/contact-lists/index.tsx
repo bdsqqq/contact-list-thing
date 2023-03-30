@@ -3,7 +3,6 @@ import Head from "next/head";
 
 import { Subscribers } from "~/components/Subscribers";
 import { ContactLists } from "~/components/ContactLists";
-import { Upload } from "~/components/Upload";
 import { Shell } from "~/components/Shell";
 
 const ContactListsPage: NextPage = () => {
