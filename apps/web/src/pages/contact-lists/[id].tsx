@@ -108,8 +108,29 @@ const AddContacts = () => {
   );
 };
 
+import { useCsvDataStore } from "~/utils/csvDataStore";
+import { useState } from "react";
+
 const AddContactsForm = () => {
   const addContacts = api.subscriber.createMany.useMutation();
+  const { clearStore, inputtedColumns, overrides, parsedData, setParsedData } =
+    useCsvDataStore();
+
+  const [fileData, setFileData] = useState<string>("");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result;
+      if (typeof text === "string") {
+        setFileData(text);
+        setParsedData({ data: text, overrides: {} });
+      }
+    };
+    reader.readAsText(file);
+  };
 
   return (
     <form
@@ -128,8 +149,9 @@ const AddContactsForm = () => {
       className="flex flex-col gap-6"
     >
       <div className="mt-6 flex flex-col space-y-2">
-        <input type="file" />
+        <input type="file" onChange={handleFileChange} />
       </div>
+      {parsedData && <pre>{JSON.stringify(parsedData, null, 2)}</pre>}
       <div className="flex items-center gap-2">
         <button type="submit">Add</button>
         <button type="button">Cancel</button>
