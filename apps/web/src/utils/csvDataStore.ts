@@ -15,7 +15,7 @@ type csvDataStore = {
       name: string;
       email: string;
       subscribed: string;
-      created_at?: Date;
+      createdAt?: string;
     }[];
   };
   setParsedData: ({
@@ -26,12 +26,7 @@ type csvDataStore = {
     overrides: TOverrides;
   }) => void;
   overrides: TOverrides;
-  setOverrides: (data: {
-    name?: string | string[];
-    email?: string | string[];
-    subscribed?: string | string[];
-    createdAt?: string | string[];
-  }) => void;
+  setOverrides: (data: TOverrides) => void;
   clearStore: () => void;
 };
 

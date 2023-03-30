@@ -109,12 +109,37 @@ const AddContacts = () => {
 };
 
 import { useCsvDataStore } from "~/utils/csvDataStore";
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
+
+const expectedColumns = [
+  {
+    label: "Name",
+    value: "name",
+  },
+  {
+    label: "Email",
+    value: "email",
+  },
+  {
+    label: "Subscribed",
+    value: "subscribed",
+  },
+  {
+    label: "Created At",
+    value: "createdAt",
+  },
+];
 
 const AddContactsForm = () => {
   const addContacts = api.subscriber.createMany.useMutation();
-  const { clearStore, inputtedColumns, overrides, parsedData, setParsedData } =
-    useCsvDataStore();
+  const {
+    clearStore,
+    inputtedColumns,
+    overrides,
+    setOverrides,
+    parsedData,
+    setParsedData,
+  } = useCsvDataStore();
 
   const [fileData, setFileData] = useState<string>("");
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,26 +157,57 @@ const AddContactsForm = () => {
     reader.readAsText(file);
   };
 
+  const handleOverrideInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setOverrides(Object.assign({}, overrides, { [name]: value }));
+    setParsedData({
+      data: fileData,
+      overrides: Object.assign({}, overrides, { [name]: value }),
+    });
+  };
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        addContacts.mutate([
-          {
-            ListId: 1,
-            email: "",
-            name: "",
-            subscribed: true,
-            createdAt: now,
-          },
-        ]);
+        const temp = parsedData.data.map((subscriber) => ({
+          ...subscriber,
+          subscribed: subscriber.subscribed === "true",
+          createdAt:
+            (subscriber.createdAt && new Date(subscriber.createdAt)) ||
+            new Date(),
+          ListId: 2,
+        }));
+
+        console.log(temp);
+
+        addContacts.mutate(temp);
+        clearStore();
       }}
       className="flex flex-col gap-6"
     >
       <div className="mt-6 flex flex-col space-y-2">
         <input type="file" onChange={handleFileChange} />
       </div>
-      {parsedData && <pre>{JSON.stringify(parsedData, null, 2)}</pre>}
+      <div className="mt-6 flex flex-col space-y-2">
+        {expectedColumns.map((column) => (
+          <div className="flex gap-2" key={`input-wrapper-${column.value}`}>
+            <label htmlFor={column.value}>{`${column.label}:`}</label>
+            <select
+              className="bg-slate-7 h-6"
+              onChange={(e) => handleOverrideInputChange(e)}
+              name={column.value}
+              id={column.value}
+            >
+              {parsedData.columns.map((parsedDataColumn) => (
+                <option key={parsedDataColumn} value={parsedDataColumn}>
+                  {parsedDataColumn}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
       <div className="flex items-center gap-2">
         <button type="submit">Add</button>
         <button type="button">Cancel</button>
