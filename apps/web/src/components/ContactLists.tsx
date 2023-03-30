@@ -1,9 +1,8 @@
 import { api } from "~/utils/api";
 import type { List } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const ContactLists = () => {
-  const queryClient = useQueryClient();
+  const queryClient = api.useContext();
 
   const {
     data: lists,
@@ -12,10 +11,7 @@ export const ContactLists = () => {
   } = api.list.getAll.useQuery(undefined, {
     onSuccess: (data) => {
       data.forEach((list) => {
-        queryClient.setQueryData(
-          [["list", "getById"], { input: { id: list.id }, type: "query" }],
-          list
-        );
+        queryClient.list.getById.setData({ id: list.id }, list);
       });
     },
   });
@@ -40,7 +36,6 @@ import Link from "next/link";
 import { formatDistance } from "date-fns";
 import { Button } from "./ui/Button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
 
 const columnHelper = createColumnHelper<List>();
 const now = new Date();
@@ -95,16 +90,7 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const [hoveredListId, setHoveredListId] = useState<number | null>(null);
-
-  const { data } = api.subscriber.getAllFromList.useQuery(
-    {
-      ListId: hoveredListId ?? 0,
-    },
-    {
-      enabled: !!hoveredListId,
-    }
-  );
+  const queryClient = api.useContext();
 
   return (
     <table className="min-w-full border-separate border-spacing-0 border-none text-left">
@@ -141,7 +127,9 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
           <tr
             key={row.id}
             onMouseOver={() => {
-              setHoveredListId(row.original.id);
+              queryClient.subscriber.getAllFromList.prefetch({
+                ListId: row.original.id,
+              });
             }}
           >
             {row.getVisibleCells().map((cell) => (
