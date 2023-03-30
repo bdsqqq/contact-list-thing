@@ -23,11 +23,19 @@ import {
 } from "~/components/ui/Tooltip";
 
 import { Button } from "~/components/ui/Button";
+import { useComboboxState } from "ariakit/combobox";
+import {
+  Combobox,
+  ComboboxItem,
+  ComboboxPopover,
+} from "~/components/ui/ComboBox";
 
 const Home: NextPage = () => {
   const { data, isLoading, error } = api.list.getByName.useQuery({
     name: "tost",
   });
+
+  const comboboxState = useComboboxState({ gutter: 4, sameWidth: true });
 
   return (
     <>
@@ -80,6 +88,16 @@ const Home: NextPage = () => {
             <Button variant={"outline"}>Hej</Button>
             <Button variant={"link"}>Hej</Button>
           </div>
+
+          <div>
+            <Combobox state={comboboxState} />
+            <ComboboxPopover state={comboboxState}>
+              {["hej", "do", "something", "lol"].map((item) => (
+                <ComboboxItem key={item} value={item.toString()} />
+              ))}
+            </ComboboxPopover>
+          </div>
+
           {/* <section>
             <h2>LISTS</h2>
             <ContactLists />
