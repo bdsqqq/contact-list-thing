@@ -21,6 +21,7 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "ariakit": "2.0.0-next.43",
     "class-variance-authority": "^0.4.0",
     "date-fns": "^2.29.3",
     "next": "^13.2.1",
