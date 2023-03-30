@@ -1,8 +1,24 @@
 import { api } from "~/utils/api";
 import type { List } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const ContactLists = () => {
-  const { data: lists, error, isLoading } = api.list.getAll.useQuery();
+  const queryClient = useQueryClient();
+
+  const {
+    data: lists,
+    error,
+    isLoading,
+  } = api.list.getAll.useQuery(undefined, {
+    onSuccess: (data) => {
+      data.forEach((list) => {
+        queryClient.setQueryData(
+          [["list", "getById"], { input: { id: list.id }, type: "query" }],
+          list
+        );
+      });
+    },
+  });
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
