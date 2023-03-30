@@ -35,11 +35,20 @@ import { api } from "~/utils/api";
 import { useCsvDataStore } from "~/utils/csvDataStore";
 import { useState } from "react";
 import { CSVInputs } from "~/components/Upload";
+import { Button } from "~/components/ui/Button";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 const NewListDialog = () => {
   return (
     <Dialog>
-      <DialogTrigger>+ Add list</DialogTrigger>
+      <DialogTrigger>
+        <Button>
+          <span>
+            <PlusIcon />
+          </span>
+          Add List
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add list</DialogTitle>
