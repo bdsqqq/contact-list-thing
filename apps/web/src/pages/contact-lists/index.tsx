@@ -26,6 +26,7 @@ const ContactListsPage: NextPage = () => {
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -35,11 +36,20 @@ import { api } from "~/utils/api";
 import { useCsvDataStore } from "~/utils/csvDataStore";
 import { useState } from "react";
 import { CSVInputs } from "~/components/Upload";
+import { Button } from "~/components/ui/Button";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 const NewListDialog = () => {
   return (
     <Dialog>
-      <DialogTrigger>+ Add list</DialogTrigger>
+      <DialogTrigger>
+        <Button>
+          <span>
+            <PlusIcon />
+          </span>
+          Add List
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add list</DialogTitle>
@@ -107,8 +117,12 @@ const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
         <CSVInputs fileData={fileData} setFileData={setFileData} />
       </div>
       <div className="flex items-center gap-2">
-        <button type="submit">Add</button>
-        <button type="button">Cancel</button>
+        <Button type="submit">Add</Button>
+        <DialogClose asChild>
+          <Button variant={"ghost"} type="button">
+            Cancel
+          </Button>
+        </DialogClose>
       </div>
     </form>
   );

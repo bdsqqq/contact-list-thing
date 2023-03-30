@@ -22,6 +22,8 @@ import {
   TooltipTrigger,
 } from "~/components/ui/Tooltip";
 
+import { Button } from "~/components/ui/Button";
+
 const Home: NextPage = () => {
   const { data, isLoading, error } = api.list.getByName.useQuery({
     name: "tost",
@@ -49,8 +51,10 @@ const Home: NextPage = () => {
           <Dialog>
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
-                  <DialogTrigger>Open</DialogTrigger>
+                <TooltipTrigger asChild>
+                  <DialogTrigger>
+                    <Button>Open</Button>
+                  </DialogTrigger>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Open dialog</p>
@@ -68,6 +72,14 @@ const Home: NextPage = () => {
               </DialogHeader>
             </DialogContent>
           </Dialog>
+
+          <div className="flex gap-6">
+            <Button>Hej</Button>
+            <Button variant={"destructive"}>Hej</Button>
+            <Button variant={"ghost"}>Hej</Button>
+            <Button variant={"outline"}>Hej</Button>
+            <Button variant={"link"}>Hej</Button>
+          </div>
           {/* <section>
             <h2>LISTS</h2>
             <ContactLists />
