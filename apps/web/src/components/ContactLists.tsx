@@ -22,6 +22,8 @@ import {
 } from "@tanstack/react-table";
 import Link from "next/link";
 import { formatDistance } from "date-fns";
+import { Button } from "./ui/Button";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 const columnHelper = createColumnHelper<List>();
 const now = new Date();
@@ -48,13 +50,17 @@ const columns = [
   columnHelper.display({
     id: "actions",
     cell: (props) => (
-      <button
+      <Button
+        variant={"ghost"}
+        square
+        size={"sm"}
         onClick={() => {
           console.log(props.row.original);
         }}
+        aria-label="More actions"
       >
-        ...
-      </button>
+        <DotsHorizontalIcon />
+      </Button>
     ),
   }),
 ];
@@ -80,7 +86,7 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
             {headerGroup.headers.map((header) => (
               <th
                 className={`
-                border-slate-6 text-slate-11 h-8 border-t border-b px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
+                border-slate-6 text-slate-11 h-8 border-b border-t px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
                 ${header.id === "created" ? " text-right" : ""}
                 `}
                 style={{
