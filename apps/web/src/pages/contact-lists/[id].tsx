@@ -96,8 +96,14 @@ import {
 } from "~/components/ui/Dialog";
 
 const AddContacts = ({ listId }: { listId: number }) => {
+  const { clearStore } = useCsvDataStore();
+
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={() => {
+        clearStore();
+      }}
+    >
       <DialogTrigger asChild>
         <Button>
           <span>
