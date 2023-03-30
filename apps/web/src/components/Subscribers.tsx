@@ -26,6 +26,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { formatDistance } from "date-fns";
+import { Button } from "./ui/Button";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 const columnHelper = createColumnHelper<Subscriber>();
 const now = new Date();
@@ -61,13 +63,16 @@ const columns = [
   columnHelper.display({
     id: "actions",
     cell: (props) => (
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
+        square
         onClick={() => {
           console.log(props.row.original);
         }}
       >
-        ...
-      </button>
+        <DotsHorizontalIcon />
+      </Button>
     ),
   }),
 ];
