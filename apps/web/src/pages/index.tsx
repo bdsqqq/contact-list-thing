@@ -15,6 +15,13 @@ import {
   DialogTrigger,
 } from "~/components/ui/Dialog";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/Tooltip";
+
 const Home: NextPage = () => {
   const { data, isLoading, error } = api.list.getByName.useQuery({
     name: "tost",
@@ -40,7 +47,17 @@ const Home: NextPage = () => {
           </>
 
           <Dialog>
-            <DialogTrigger>Open</DialogTrigger>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <DialogTrigger>Open</DialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Open dialog</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Are you sure absolutely sure?</DialogTitle>
