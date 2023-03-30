@@ -1,3 +1,5 @@
+// TODO: don't love the name of this file but I'm a bit too tired to think about it.
+
 import { useCsvDataStore } from "~/utils/csvDataStore";
 
 const expectedColumns = [
