@@ -32,7 +32,7 @@ const ContactListsPage: NextPage = () => {
       <Shell
         details={<Details data={data} isLoading={isLoading} />}
         title={data?.name}
-        actions={<button>Import contacts</button>}
+        actions={<AddContacts />}
       >
         <div className="flex flex-col gap-8">
           <section>
@@ -84,6 +84,58 @@ const CreatedAtData = ({
     );
 
   return <span>N/A</span>;
+};
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/Dialog";
+
+const AddContacts = () => {
+  return (
+    <Dialog>
+      <DialogTrigger>+ Add contacts</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add contacts</DialogTitle>
+          <AddContactsForm />
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const AddContactsForm = () => {
+  const addContacts = api.subscriber.createMany.useMutation();
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        addContacts.mutate([
+          {
+            ListId: 1,
+            email: "",
+            name: "",
+            subscribed: true,
+            createdAt: now,
+          },
+        ]);
+      }}
+      className="flex flex-col gap-6"
+    >
+      <div className="mt-6 flex flex-col space-y-2">
+        <input type="file" />
+      </div>
+      <div className="flex items-center gap-2">
+        <button type="submit">Add</button>
+        <button type="button">Cancel</button>
+      </div>
+    </form>
+  );
 };
 
 export default ContactListsPage;
