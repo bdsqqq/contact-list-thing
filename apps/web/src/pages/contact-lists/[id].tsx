@@ -122,6 +122,7 @@ const AddContactsForm = ({
   const addContacts = api.subscriber.createMany.useMutation();
   const { clearStore, parsedData } = useCsvDataStore();
 
+  // TODO: this is here only because of initialFileData, maybe move this to CSV Inputs???
   const [fileData, setFileData] = useState<string>(initialFileData || "");
 
   return (
