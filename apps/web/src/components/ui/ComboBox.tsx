@@ -92,4 +92,6 @@ const ComboboxPopover = React.forwardRef<HTMLDivElement, ComboboxPopoverProps>(
   }
 );
 
+ComboboxPopover.displayName = "ComboboxPopover";
+
 export { Combobox, ComboboxItem, ComboboxPopover };
