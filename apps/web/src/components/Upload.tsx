@@ -1,20 +1,35 @@
-import { useState } from "react";
-import { z } from "zod";
-import { api } from "~/utils/api";
-import { csvToJson, mapCsvProperties } from "~/utils/csv";
-import { mockData, overrides } from "~/utils/mockData";
-import { subscriberSchema } from "~/utils/schemas";
+// TODO: don't love the name of this file but I'm a bit too tired to think about it.
 
-const Upload = () => {
-  const [fileData, setFileData] = useState<string>("");
-  const [inputData, setInputData] = useState<string>("");
-  const [columnOverrides, setColumnOverrides] = useState<{
-    name?: string | string[];
-    email?: string | string[];
-    subscribed?: string | string[];
-    createdAt?: string | string[];
-  }>({});
-  const createManySubscribers = api.subscriber.createMany.useMutation();
+import { useCsvDataStore } from "~/utils/csvDataStore";
+
+const expectedColumns = [
+  {
+    label: "Name",
+    value: "name",
+  },
+  {
+    label: "Email",
+    value: "email",
+  },
+  {
+    label: "Subscribed",
+    value: "subscribed",
+  },
+  {
+    label: "Created At",
+    value: "createdAt",
+  },
+];
+
+// [ ] Daily  I don't love this way of handling this but it let's me abstract this to reuse in both pages for now. Ideally would've asked for input from other teammembers on how to handle this.
+const CSVInputs = ({
+  fileData,
+  setFileData,
+}: {
+  fileData: string;
+  setFileData: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  const { setParsedData } = useCsvDataStore();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -25,6 +40,7 @@ const Upload = () => {
       const text = e.target?.result;
       if (typeof text === "string") {
         setFileData(text);
+        setParsedData({ data: text, overrides: {} });
       }
     };
     reader.readAsText(file);
@@ -33,124 +49,54 @@ const Upload = () => {
   return (
     <>
       <input type="file" onChange={handleFileChange} />
-
-      <div className="flex gap-4 [&>*]:bg-slate-2">
-        <div>
-          <h3>What csv to parse</h3>
-          {Object.entries(mockData).map(([key, value]) => (
-            <div key={key}>
-              <input
-                type="radio"
-                id={key}
-                name="mockData"
-                value={value}
-                onChange={(e) => {
-                  setInputData(e.target.value);
-                }}
-              />
-              <label htmlFor={key}>{key}</label>
-            </div>
-          ))}
-          <div key={"file"}>
-            <input
-              type="radio"
-              id={"file"}
-              name="mockData"
-              value={"file"}
-              onChange={(e) => {
-                setInputData(fileData);
-              }}
-            />
-            <label htmlFor={"file"}>File data</label>
-          </div>
-        </div>
-        <div>
-          <h2>What override to use when mapping</h2>
-          {overrides.map((override, i) => (
-            <div key={override.key}>
-              <input
-                type="radio"
-                id={override.key}
-                name="columnOverrides"
-                value={i}
-                onChange={(e) => {
-                  setColumnOverrides(
-                    overrides[parseInt(e.target.value)]?.overrides || {}
-                  );
-                }}
-              />
-              <label htmlFor={override.key}>{override.description}</label>
-            </div>
-          ))}
-        </div>
+      <div className="flex flex-col space-y-2">
+        <OverwriteInputs csv={fileData} />
       </div>
-      <button
-        onClick={() => {
-          const data = mapCsvProperties(
-            csvToJson(inputData || "").data,
-            columnOverrides
-          ).map((subscriber) => ({
-            ...subscriber,
-            subscribed: subscriber.subscribed === "true",
-            createdAt: new Date(subscriber.createdAt),
-            ListId: 2,
-          }));
-
-          if (data.length === 0) return;
-          z.array(subscriberSchema).parse(data);
-
-          createManySubscribers.mutate(data, {
-            onSuccess: () => {
-              console.log("Subscribers created");
-            },
-          });
-        }}
-      >
-        UPLOAD CSV DATA
-      </button>
-
-      <PreviewInputAndOutput
-        input={inputData}
-        columnOverrides={columnOverrides}
-      />
     </>
   );
 };
 
-const PreviewInputAndOutput = ({
-  input,
-  columnOverrides,
-}: {
-  input: string;
-  columnOverrides: {
-    name?: string | string[];
-    email?: string | string[];
-    subscribed?: string | string[];
-    createdAt?: string | string[];
+const OverwriteInputs = ({ csv }: { csv: string }) => {
+  const { parsedData, overrides, setOverrides, setParsedData } =
+    useCsvDataStore();
+
+  const handleOverrideInputChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setOverrides(Object.assign({}, overrides, { [name]: value }));
+    setParsedData({
+      data: csv,
+      overrides: Object.assign({}, overrides, { [name]: value }),
+    });
   };
-}) => {
+
   return (
-    <div className="flex gap-6 bg-slate-2">
-      <div className="bg-slate-3">
-        <h2>input</h2>
-        <pre>
-          <code>{input && input}</code>
-        </pre>
-      </div>
-      <div className="bg-slate-3">
-        <h2>output</h2>
-        <pre>
-          <code>
-            {JSON.stringify(
-              mapCsvProperties(csvToJson(input || "").data, columnOverrides),
-              null,
-              2
-            )}
-          </code>
-        </pre>
-      </div>
-    </div>
+    <>
+      {expectedColumns.map((column) => (
+        <div className="flex gap-2" key={`input-wrapper-${column.value}`}>
+          <label htmlFor={column.value}>{`${column.label}:`}</label>
+          <select
+            className="bg-slate-7 h-6"
+            onChange={(e) => handleOverrideInputChange(e)}
+            name={column.value}
+            id={column.value}
+            defaultValue={
+              // TODO: Fuzzy match to a computed column
+              ""
+            }
+          >
+            <option value="">Select a column...</option>
+            {parsedData.columns.map((parsedDataColumn) => (
+              <option key={parsedDataColumn} value={parsedDataColumn}>
+                {parsedDataColumn}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
+    </>
   );
 };
 
-export { Upload };
+export { CSVInputs };
