@@ -40,8 +40,14 @@ import { Button } from "~/components/ui/Button";
 import { PlusIcon } from "@radix-ui/react-icons";
 
 const NewListDialog = () => {
+  const { clearStore } = useCsvDataStore();
+
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={() => {
+        clearStore();
+      }}
+    >
       <DialogTrigger>
         <Button>
           <span>
