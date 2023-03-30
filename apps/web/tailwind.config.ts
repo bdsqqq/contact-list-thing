@@ -4,6 +4,7 @@ import {
   slateDarkA as slate,
   mintDarkA as mint,
   blackA,
+  redDarkA as red,
 } from "@radix-ui/colors";
 
 const onlyNumbers = (str: string) => str.replace(/[^0-9]/g, "");
@@ -27,11 +28,15 @@ export default {
     colors: {
       transparent: "transparent",
       current: "currentColor",
-      black: numberfyRadixColorNames(blackA),
+      black: {
+        DEFAULT: "#000",
+        ...numberfyRadixColorNames(blackA),
+      },
       white: "#fff",
       root: "rgb(5, 5, 10)",
       slate: numberfyRadixColorNames(slate),
       green: numberfyRadixColorNames(mint),
+      red: numberfyRadixColorNames(red),
     },
     extend: {
       animation: {
