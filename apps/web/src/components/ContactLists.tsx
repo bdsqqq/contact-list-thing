@@ -2,7 +2,19 @@ import { api } from "~/utils/api";
 import type { List } from "@prisma/client";
 
 export const ContactLists = () => {
-  const { data: lists, error, isLoading } = api.list.getAll.useQuery();
+  const queryClient = api.useContext();
+
+  const {
+    data: lists,
+    error,
+    isLoading,
+  } = api.list.getAll.useQuery(undefined, {
+    onSuccess: (data) => {
+      data.forEach((list) => {
+        queryClient.list.getById.setData({ id: list.id }, list);
+      });
+    },
+  });
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
@@ -78,6 +90,8 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const queryClient = api.useContext();
+
   return (
     <table className="min-w-full border-separate border-spacing-0 border-none text-left">
       <thead className="bg-slate-3 h-8 rounded-md">
@@ -110,7 +124,14 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
       </thead>
       <tbody>
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
+          <tr
+            key={row.id}
+            onMouseOver={() => {
+              queryClient.subscriber.getAllFromList.prefetch({
+                ListId: row.original.id,
+              });
+            }}
+          >
             {row.getVisibleCells().map((cell) => (
               <td
                 className={`border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm 
