@@ -40,6 +40,7 @@ import Link from "next/link";
 import { formatDistance } from "date-fns";
 import { Button } from "./ui/Button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
 
 const columnHelper = createColumnHelper<List>();
 const now = new Date();
@@ -94,6 +95,17 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const [hoveredListId, setHoveredListId] = useState<number | null>(null);
+
+  const { data } = api.subscriber.getAllFromList.useQuery(
+    {
+      ListId: hoveredListId ?? 0,
+    },
+    {
+      enabled: !!hoveredListId,
+    }
+  );
+
   return (
     <table className="min-w-full border-separate border-spacing-0 border-none text-left">
       <thead className="bg-slate-3 h-8 rounded-md">
@@ -126,7 +138,12 @@ const ListsTable = ({ listsData }: { listsData: List[] }) => {
       </thead>
       <tbody>
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
+          <tr
+            key={row.id}
+            onMouseOver={() => {
+              setHoveredListId(row.original.id);
+            }}
+          >
             {row.getVisibleCells().map((cell) => (
               <td
                 className={`border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm 
