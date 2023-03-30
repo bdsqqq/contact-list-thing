@@ -2,6 +2,8 @@ import { type AppType } from "next/app";
 import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
@@ -15,6 +17,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         }
       `}</style>
       <Component {...pageProps} />
+      <ReactQueryDevtools />
     </>
   );
 };
