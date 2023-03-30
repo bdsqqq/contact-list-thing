@@ -26,6 +26,7 @@ const ContactListsPage: NextPage = () => {
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -117,9 +118,11 @@ const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
       </div>
       <div className="flex items-center gap-2">
         <Button type="submit">Add</Button>
-        <Button variant="ghost" type="button">
-          Cancel
-        </Button>
+        <DialogClose asChild>
+          <Button variant={"ghost"} type="button">
+            Cancel
+          </Button>
+        </DialogClose>
       </div>
     </form>
   );
