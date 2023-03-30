@@ -31,6 +31,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/Dialog";
+import { api } from "~/utils/api";
+import { useCsvDataStore } from "~/utils/csvDataStore";
+import { useState } from "react";
+import { CSVInputs } from "~/components/Upload";
 
 const NewListDialog = () => {
   return (
@@ -46,9 +50,43 @@ const NewListDialog = () => {
   );
 };
 
-const NewListForm = () => {
+const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
+  const addContacts = api.subscriber.createMany.useMutation();
+  const addList = api.list.create.useMutation();
+  const { clearStore, parsedData } = useCsvDataStore();
+
+  // TODO: this is here only because of initialFileData, maybe move this to CSV Inputs???
+  const [fileData, setFileData] = useState<string>(initialFileData || "");
+
   return (
-    <form className="flex flex-col gap-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const listRes = addList.mutate(
+          {
+            name: e.currentTarget["list-name"].value,
+          },
+          {
+            onSuccess: (data) => {
+              if (!parsedData) return;
+              addContacts.mutate(
+                //  TODO: DAMNNN, this should probably be handled in the parser, I'm doing it EVERYWHERE.
+                parsedData.data.map((subscriber) => ({
+                  ...subscriber,
+                  subscribed: subscriber.subscribed === "true",
+                  createdAt:
+                    (subscriber.createdAt && new Date(subscriber.createdAt)) ||
+                    new Date(),
+                  ListId: data.id,
+                }))
+              );
+            },
+          }
+        );
+        clearStore();
+      }}
+      className="flex flex-col gap-6"
+    >
       <div className="mt-6 flex flex-col space-y-2">
         <label
           htmlFor="list-name"
@@ -57,12 +95,16 @@ const NewListForm = () => {
           Name
         </label>
         <input
+          required
           type="text"
           id="list-name"
           name="list-name"
           autoComplete="off"
           className="border-slate-6 bg-slate-4 text-slate-12 focus:ring-slate-7 placeholder:text-slate-11 relative h-8 w-full select-none appearance-none rounded-md border px-2 pl-[--text-field-left-slot-width] pr-[--text-field-right-slot-width] text-sm outline-none transition duration-200 ease-in-out focus:ring-2"
         />
+      </div>
+      <div className="flex flex-col space-y-6">
+        <CSVInputs fileData={fileData} setFileData={setFileData} />
       </div>
       <div className="flex items-center gap-2">
         <button type="submit">Add</button>
