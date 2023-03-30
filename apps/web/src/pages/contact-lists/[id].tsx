@@ -32,7 +32,7 @@ const ContactListsPage: NextPage = () => {
       <Shell
         details={<Details data={data} isLoading={isLoading} />}
         title={data?.name}
-        actions={<AddContacts />}
+        actions={<AddContacts listId={parseInt(id)} />}
       >
         <div className="flex flex-col gap-8">
           <section>
@@ -94,14 +94,14 @@ import {
   DialogTrigger,
 } from "~/components/ui/Dialog";
 
-const AddContacts = () => {
+const AddContacts = ({ listId }: { listId: number }) => {
   return (
     <Dialog>
       <DialogTrigger>+ Add contacts</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add contacts</DialogTitle>
-          <AddContactsForm />
+          <AddContactsForm listId={listId} />
         </DialogHeader>
       </DialogContent>
     </Dialog>
@@ -110,6 +110,49 @@ const AddContacts = () => {
 
 import { useCsvDataStore } from "~/utils/csvDataStore";
 import { type ChangeEvent, useState } from "react";
+
+const AddContactsForm = ({
+  listId,
+  initialFileData,
+}: {
+  listId: number;
+  initialFileData?: string;
+}) => {
+  const addContacts = api.subscriber.createMany.useMutation();
+  const { clearStore, parsedData } = useCsvDataStore();
+
+  const [fileData, setFileData] = useState<string>(initialFileData || "");
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const temp = parsedData.data.map((subscriber) => ({
+          ...subscriber,
+          subscribed: subscriber.subscribed === "true",
+          createdAt:
+            (subscriber.createdAt && new Date(subscriber.createdAt)) ||
+            new Date(),
+          ListId: listId,
+        }));
+
+        console.log(temp);
+
+        addContacts.mutate(temp);
+        clearStore();
+      }}
+      className="flex flex-col gap-6"
+    >
+      <div className="mt-6 flex flex-col space-y-6">
+        <CSVInputs fileData={fileData} setFileData={setFileData} />
+      </div>
+      <div className="flex items-center gap-2">
+        <button type="submit">Add</button>
+        <button type="button">Cancel</button>
+      </div>
+    </form>
+  );
+};
 
 const expectedColumns = [
   {
@@ -130,18 +173,16 @@ const expectedColumns = [
   },
 ];
 
-const AddContactsForm = () => {
-  const addContacts = api.subscriber.createMany.useMutation();
-  const {
-    clearStore,
-    inputtedColumns,
-    overrides,
-    setOverrides,
-    parsedData,
-    setParsedData,
-  } = useCsvDataStore();
+// [ ] Daily  I don't love this way of handling this but it let's me abstract this to reuse in both pages for now. Ideally would've asked for input from other teammembers on how to handle this.
+const CSVInputs = ({
+  fileData,
+  setFileData,
+}: {
+  fileData: string;
+  setFileData: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  const { setParsedData } = useCsvDataStore();
 
-  const [fileData, setFileData] = useState<string>("");
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -157,62 +198,54 @@ const AddContactsForm = () => {
     reader.readAsText(file);
   };
 
+  return (
+    <>
+      <input type="file" onChange={handleFileChange} />
+      <div className="flex flex-col space-y-2">
+        <OverwriteInputs csv={fileData} />
+      </div>
+    </>
+  );
+};
+
+const OverwriteInputs = ({ csv }: { csv: string }) => {
+  const { parsedData, overrides, setOverrides, setParsedData } =
+    useCsvDataStore();
+
   const handleOverrideInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setOverrides(Object.assign({}, overrides, { [name]: value }));
     setParsedData({
-      data: fileData,
+      data: csv,
       overrides: Object.assign({}, overrides, { [name]: value }),
     });
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const temp = parsedData.data.map((subscriber) => ({
-          ...subscriber,
-          subscribed: subscriber.subscribed === "true",
-          createdAt:
-            (subscriber.createdAt && new Date(subscriber.createdAt)) ||
-            new Date(),
-          ListId: 2,
-        }));
-
-        console.log(temp);
-
-        addContacts.mutate(temp);
-        clearStore();
-      }}
-      className="flex flex-col gap-6"
-    >
-      <div className="mt-6 flex flex-col space-y-2">
-        <input type="file" onChange={handleFileChange} />
-      </div>
-      <div className="mt-6 flex flex-col space-y-2">
-        {expectedColumns.map((column) => (
-          <div className="flex gap-2" key={`input-wrapper-${column.value}`}>
-            <label htmlFor={column.value}>{`${column.label}:`}</label>
-            <select
-              className="bg-slate-7 h-6"
-              onChange={(e) => handleOverrideInputChange(e)}
-              name={column.value}
-              id={column.value}
-            >
-              {parsedData.columns.map((parsedDataColumn) => (
-                <option key={parsedDataColumn} value={parsedDataColumn}>
-                  {parsedDataColumn}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center gap-2">
-        <button type="submit">Add</button>
-        <button type="button">Cancel</button>
-      </div>
-    </form>
+    <>
+      {expectedColumns.map((column) => (
+        <div className="flex gap-2" key={`input-wrapper-${column.value}`}>
+          <label htmlFor={column.value}>{`${column.label}:`}</label>
+          <select
+            className="bg-slate-7 h-6"
+            onChange={(e) => handleOverrideInputChange(e)}
+            name={column.value}
+            id={column.value}
+            defaultValue={
+              // TODO: Fuzzy match to a computed column
+              ""
+            }
+          >
+            <option value="">Select a column...</option>
+            {parsedData.columns.map((parsedDataColumn) => (
+              <option key={parsedDataColumn} value={parsedDataColumn}>
+                {parsedDataColumn}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
+    </>
   );
 };
 
