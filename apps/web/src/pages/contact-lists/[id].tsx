@@ -92,12 +92,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "~/components/ui/Dialog";
 
 const AddContacts = ({ listId }: { listId: number }) => {
   return (
     <Dialog>
-      <DialogTrigger>+ Add contacts</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button>
+          <span>
+            <PlusIcon />
+          </span>
+          Add contacts
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add contacts</DialogTitle>
@@ -111,6 +119,8 @@ const AddContacts = ({ listId }: { listId: number }) => {
 import { useCsvDataStore } from "~/utils/csvDataStore";
 import { useState } from "react";
 import { CSVInputs } from "~/components/Upload";
+import { Button } from "~/components/ui/Button";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 const AddContactsForm = ({
   listId,
@@ -149,8 +159,12 @@ const AddContactsForm = ({
         <CSVInputs fileData={fileData} setFileData={setFileData} />
       </div>
       <div className="flex items-center gap-2">
-        <button type="submit">Add</button>
-        <button type="button">Cancel</button>
+        <Button type="submit">Add</Button>
+        <DialogClose asChild>
+          <Button variant={"ghost"} type="button">
+            Cancel
+          </Button>
+        </DialogClose>
       </div>
     </form>
   );
