@@ -57,7 +57,7 @@ const Home: NextPage = () => {
               createList("hello from SDK");
             }}
           >
-            Create list named "hello from SDK"
+            Create list named hello from SDK
           </Button>
           <Button
             onClick={() => {
