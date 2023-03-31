@@ -2,7 +2,7 @@ export const getColumns = (csv: string) => {
   // I don't know how to do "key, split on a match ONCE and stop", would be an amazing optimization
   const lines = csv.trim().split(/\n/);
   if (lines.length < 1 || !lines[0]) return [];
-  return lines[0].split(",");
+  return lines[0].trim().split(",");
 };
 
 export const csvToJson = (csv: string) => {
