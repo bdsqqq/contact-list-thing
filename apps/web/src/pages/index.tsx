@@ -31,11 +31,12 @@ import {
 } from "~/components/ui/ComboBox";
 
 import { mockData } from "~/utils/mockData/mockData";
+import { createList, createSubscribers } from "~/utils/SDK";
 
 const Home: NextPage = () => {
   const parseAndCreateMany = api.subscriber.parseAndCreateMany.useMutation();
   const { data, error, isLoading } = api.subscriber.getAllFromList.useQuery({
-    ListId: 9,
+    ListId: 29,
   });
 
   const comboboxState = useComboboxState({ gutter: 4, sameWidth: true });
@@ -52,26 +53,19 @@ const Home: NextPage = () => {
       <Shell>
         <div className="flex flex-col gap-8">
           <Button
-            onClick={async () => {
-              await parseAndCreateMany.mutateAsync(
-                {
-                  listId: 9,
-                  csvData: mockData.withHeadersThatDontMatchOurSchema,
-                  overrides: {
-                    name: ["first_name", "last_name"],
-                  },
-                },
-                {
-                  onSuccess: (data) => {
-                    queryContext.invalidate();
-                  },
-                }
-              );
+            onClick={() => {
+              createList("hello from SDK");
             }}
           >
-            Create
+            Create list named hello from SDK
           </Button>
-
+          <Button
+            onClick={() => {
+              createSubscribers(30, mockData.expected, {});
+            }}
+          >
+            Add subscribers with SDK
+          </Button>
           <>
             {isLoading && <p>Loading...</p>}
             {error && <p>Error: {error.message}</p>}
