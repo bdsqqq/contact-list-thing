@@ -132,87 +132,90 @@ const SubscribersTable = ({
   if (error) return <p>{error.message}</p>;
   if (subscribers) {
     if (subscribers.length === 0) return <p>No subscribers</p>;
-
-    const table = useReactTable({
-      data: subscribers,
-      columns,
-      getCoreRowModel: getCoreRowModel(),
-    });
-
-    return (
-      <table className="min-w-full border-separate border-spacing-0 border-none text-left">
-        <thead className="bg-slate-3 h-8 rounded-md">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  className={`
-                border-slate-6 text-slate-11 h-8 border-b border-t px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
-                ${
-                  ["created", "subscribed"].includes(header.id)
-                    ? " text-right"
-                    : ""
-                }
-                `}
-                  style={{
-                    width:
-                      headerWidths[
-                        header.column.columnDef.id as keyof typeof headerWidths
-                      ],
-                  }}
-                  key={header.id}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  className={`border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm 
-                ${
-                  ["created", "subscribed"].includes(cell.column.id)
-                    ? " text-right"
-                    : ""
-                }`}
-                  key={cell.id}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
-      </table>
-    );
+    return <ActualTableImSoTiredOmg subscribers={subscribers} />;
   }
 
   return <>Unreachable, I think</>;
+};
+
+const ActualTableImSoTiredOmg = ({
+  subscribers,
+}: {
+  subscribers: Subscriber[];
+}) => {
+  const table = useReactTable({
+    data: subscribers,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <table className="min-w-full border-separate border-spacing-0 border-none text-left">
+      <thead className="bg-slate-3 h-8 rounded-md">
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th
+                className={`
+          border-slate-6 text-slate-11 h-8 border-b border-t px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
+          ${["created", "subscribed"].includes(header.id) ? " text-right" : ""}
+          `}
+                style={{
+                  width:
+                    headerWidths[
+                      header.column.columnDef.id as keyof typeof headerWidths
+                    ],
+                }}
+                key={header.id}
+              >
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <td
+                className={`border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm 
+          ${
+            ["created", "subscribed"].includes(cell.column.id)
+              ? " text-right"
+              : ""
+          }`}
+                key={cell.id}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+      <tfoot>
+        {table.getFooterGroups().map((footerGroup) => (
+          <tr key={footerGroup.id}>
+            {footerGroup.headers.map((header) => (
+              <th key={header.id}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.footer,
+                      header.getContext()
+                    )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </tfoot>
+    </table>
+  );
 };
 
 const Tag = ({
