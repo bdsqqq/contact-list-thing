@@ -1,5 +1,6 @@
 import { api } from "~/utils/api";
 import type { List } from "@prisma/client";
+import { EmptyState } from "~/components/EmptyState";
 
 export const ContactLists = () => {
   const queryClient = api.useContext();
@@ -19,7 +20,13 @@ export const ContactLists = () => {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
   if (lists) {
-    if (lists.length === 0) return <p>No lists</p>;
+    if (lists.length === 0)
+      return (
+        <EmptyState
+          title={"You haven't added any contact lists yet"}
+          action={<NewListDialog />}
+        />
+      );
     return <ListsTable listsData={lists} />;
   }
 
@@ -36,6 +43,7 @@ import Link from "next/link";
 import { formatDistance } from "date-fns";
 import { Button } from "./ui/Button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { NewListDialog } from "~/pages/contact-lists";
 
 const columnHelper = createColumnHelper<List>();
 const now = new Date();
