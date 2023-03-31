@@ -48,7 +48,7 @@ const DialogContent = React.forwardRef<
       ref={ref}
       className={cn(
         // what is __variable_6280c3??
-        "border-slate-6 bg-root __variable_6280c3 data-[state=open]:animate-open-scale-in-fade data-[state=closed]:animate-close-scale-out-fade fixed left-0 right-0 top-8 z-20 mx-auto w-full max-w-md rounded-lg border p-4 font-sans sm:top-[calc(100vh-80%)]",
+        "border-slate-6 bg-root __variable_6280c3 data-[state=open]:animate-open-scale-in-fade data-[state=closed]:animate-close-scale-out-fade fixed left-0 right-0 top-8 z-20 mx-auto w-full max-w-md rounded-lg border p-4 sm:top-[calc(100vh-80%)]",
         className
       )}
       {...props}
