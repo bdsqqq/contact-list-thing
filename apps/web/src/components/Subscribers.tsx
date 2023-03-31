@@ -2,6 +2,9 @@ import { api } from "~/utils/api";
 import type { Subscriber } from "@prisma/client";
 import { ReactNode, useState } from "react";
 
+import { EmptyState } from "~/components/EmptyState";
+import { AddContacts } from "~/pages/contact-lists/[id]";
+
 export const Subscribers = ({ listid }: { listid: number }) => {
   const {
     data: subscribers,
@@ -33,19 +36,33 @@ export const Subscribers = ({ listid }: { listid: number }) => {
         </div>
       </form>
 
-      {(filteredSubscribers as Subscriber[])?.length > 0 ||
-      filteredIsLoading ||
-      filteredError ? (
+      {subscribers?.length && search.length > 0 ? (
         <SubscribersTable
           subscribers={filteredSubscribers as Subscriber[]}
           error={filteredError}
           isLoading={filteredIsLoading}
+          emptyState={
+            <EmptyState
+              title="No subscribers match the current search"
+              description="Try searching for a different name or email"
+              action={
+                <Button onClick={() => [setSearch("")]}>Clear search</Button>
+              }
+            />
+          }
         />
       ) : (
         <SubscribersTable
           subscribers={subscribers}
           error={error}
           isLoading={isLoading}
+          emptyState={
+            <EmptyState
+              title="This list has no subscribers yet"
+              description="You can add subscribers by uploading a CSV file or by [other way of adding subscribers resend might provide]"
+              action={<AddContacts listId={listid} />}
+            />
+          }
         />
       )}
     </>
@@ -58,10 +75,10 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { formatDistance } from "date-fns";
-import { Button } from "./ui/Button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { Input } from "./ui/Input";
+import { formatDistance } from "date-fns";
+import { Button } from "~/components/ui/Button";
+import { Input } from "~/components/ui/Input";
 
 const columnHelper = createColumnHelper<Subscriber>();
 const now = new Date();
@@ -123,15 +140,17 @@ const SubscribersTable = ({
   subscribers,
   error,
   isLoading,
+  emptyState = false,
 }: {
   subscribers?: Subscriber[];
   error?: any;
   isLoading: boolean;
+  emptyState?: ReactNode;
 }) => {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
   if (subscribers) {
-    if (subscribers.length === 0) return <p>No subscribers</p>;
+    if (subscribers.length === 0) return <>{emptyState}</>;
     return <ActualTableImSoTiredOmg subscribers={subscribers} />;
   }
 
