@@ -31,8 +31,10 @@ import {
 } from "~/components/ui/ComboBox";
 
 const Home: NextPage = () => {
-  const { data, isLoading, error } = api.list.getByName.useQuery({
-    name: "tost",
+  const { data, isLoading, error } = api.subscriber.getByNameOrEmail.useQuery({
+    name: "bu",
+    email: "bu",
+    ListId: 1,
   });
 
   const comboboxState = useComboboxState({ gutter: 4, sameWidth: true });
