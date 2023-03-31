@@ -153,6 +153,13 @@ const MapInput = ({
     }
   };
 
+  const { overrides, setOverrides } = useCsvDataStore();
+  useEffect(() => {
+    setOverrides(
+      Object.assign({}, overrides, { [mappingTo]: selectedOverrides })
+    );
+  }, [selectedOverrides]);
+
   const filteredOptions = columns
     .filter(
       (column) =>
