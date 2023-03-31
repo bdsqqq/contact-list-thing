@@ -135,8 +135,8 @@ const AddContactsForm = ({
   listId: number;
   initialFileData?: string;
 }) => {
-  const addContacts = api.subscriber.createMany.useMutation();
-  const { clearStore, parsedData } = useCsvDataStore();
+  const addSubscribers = api.subscriber.parseAndCreateMany.useMutation();
+  const { clearStore, overrides } = useCsvDataStore();
 
   // TODO: this is here only because of initialFileData, maybe move this to CSV Inputs???
   const [fileData, setFileData] = useState<string>(initialFileData || "");
@@ -145,18 +145,12 @@ const AddContactsForm = ({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        const temp = parsedData.data.map((subscriber) => ({
-          ...subscriber,
-          subscribed: subscriber.subscribed === "true",
-          createdAt:
-            (subscriber.createdAt && new Date(subscriber.createdAt)) ||
-            new Date(),
-          ListId: listId,
-        }));
 
-        console.log(temp);
-
-        addContacts.mutate(temp);
+        addSubscribers.mutate({
+          listId,
+          csvData: fileData,
+          overrides: overrides,
+        });
         clearStore();
       }}
       className="flex flex-col gap-6"

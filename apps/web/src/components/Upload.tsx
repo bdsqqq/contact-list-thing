@@ -29,7 +29,7 @@ const CSVInputs = ({
   fileData: string;
   setFileData: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  const { setParsedData } = useCsvDataStore();
+  const { setColumns } = useCsvDataStore();
   const [rerenderForcer, setRerenderForcer] = useState(0);
   const forceRerender = () => setRerenderForcer((prev) => prev + 1);
 
@@ -46,7 +46,7 @@ const CSVInputs = ({
       const text = e.target?.result;
       if (typeof text === "string") {
         setFileData(text);
-        setParsedData({ data: text, overrides: {} });
+        setColumns(getColumns(text));
       }
     };
     reader.readAsText(file);
@@ -91,18 +91,13 @@ const CSVInputs = ({
 };
 
 const OverwriteInputs = ({ csv }: { csv: string }) => {
-  const { parsedData, overrides, setOverrides, setParsedData } =
-    useCsvDataStore();
+  const { columns, overrides, setOverrides } = useCsvDataStore();
 
   const handleOverrideInputChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setOverrides(Object.assign({}, overrides, { [name]: value }));
-    setParsedData({
-      data: csv,
-      overrides: Object.assign({}, overrides, { [name]: value }),
-    });
   };
 
   return (
@@ -117,7 +112,7 @@ const OverwriteInputs = ({ csv }: { csv: string }) => {
             htmlFor={column.value}
           >{`${column.label}`}</label>
           <ArrowLeftIcon />
-          <MapInput mappingTo={column.value} columns={parsedData.columns} />
+          <MapInput mappingTo={column.value} columns={columns} />
         </div>
       ))}
     </>
@@ -138,6 +133,7 @@ import {
   UploadIcon,
 } from "@radix-ui/react-icons";
 import { Button } from "~/components/ui/Button";
+import { getColumns } from "~/utils/csv";
 
 const normalizeText = (text: string) =>
   text
