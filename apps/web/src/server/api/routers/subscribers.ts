@@ -24,6 +24,24 @@ export const subscriberRouter = createTRPCRouter({
         skipDuplicates: true,
       });
     }),
+  getByNameOrEmail: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string(),
+        ListId: z.number().int(),
+      })
+    )
+    .query(({ input, ctx }) => {
+      return ctx.prisma.$queryRaw`
+        SELECT 
+          *
+        FROM "Subscriber"
+        WHERE "ListId" = ${input.ListId} AND
+        SIMILARITY(name,${input.name}) + SIMILARITY(email,${input.email}) >= 0.1
+        ORDER BY SIMILARITY(name,${input.name}) + SIMILARITY(email, ${input.email}) DESC
+        LIMIT 50;`;
+    }),
   getAllFromList: publicProcedure
     .input(
       z.object({
