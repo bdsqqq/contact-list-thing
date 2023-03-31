@@ -136,6 +136,8 @@ const AddContactsForm = ({
   initialFileData?: string;
 }) => {
   const addSubscribers = api.subscriber.parseAndCreateMany.useMutation();
+  const queryClient = api.useContext();
+
   const { clearStore, overrides } = useCsvDataStore();
 
   // TODO: this is here only because of initialFileData, maybe move this to CSV Inputs???
@@ -146,11 +148,20 @@ const AddContactsForm = ({
       onSubmit={(e) => {
         e.preventDefault();
 
-        addSubscribers.mutate({
-          listId,
-          csvData: fileData,
-          overrides: overrides,
-        });
+        addSubscribers.mutate(
+          {
+            listId,
+            csvData: fileData,
+            overrides: overrides,
+          },
+          {
+            onSuccess: () => {
+              queryClient.subscriber.getAllFromList.invalidate({
+                ListId: listId,
+              });
+            },
+          }
+        );
         clearStore();
       }}
       className="flex flex-col gap-6"
