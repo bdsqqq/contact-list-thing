@@ -40,7 +40,7 @@ import { Button } from "~/components/ui/Button";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Input } from "~/components/ui/Input";
 
-const NewListDialog = () => {
+export const NewListDialog = () => {
   const { clearStore } = useCsvDataStore();
 
   return (
