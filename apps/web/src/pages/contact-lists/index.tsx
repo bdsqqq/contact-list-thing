@@ -70,6 +70,7 @@ const NewListDialog = () => {
 const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
   const addSubscribers = api.subscriber.parseAndCreateMany.useMutation();
   const addList = api.list.create.useMutation();
+  const queryClient = api.useContext();
   const { clearStore, overrides, columns } = useCsvDataStore();
 
   // TODO: this is here only because of initialFileData, maybe move this to CSV Inputs???
@@ -85,12 +86,22 @@ const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
           },
           {
             onSuccess: (data) => {
+              queryClient.list.getAll.invalidate();
               if (columns && fileData && overrides) {
-                addSubscribers.mutate({
-                  listId: data.id,
-                  csvData: fileData,
-                  overrides: overrides,
-                });
+                addSubscribers.mutate(
+                  {
+                    listId: data.id,
+                    csvData: fileData,
+                    overrides: overrides,
+                  },
+                  {
+                    onSuccess: () => {
+                      queryClient.subscriber.getAllFromList.invalidate({
+                        ListId: data.id,
+                      });
+                    },
+                  }
+                );
               }
             },
           }
