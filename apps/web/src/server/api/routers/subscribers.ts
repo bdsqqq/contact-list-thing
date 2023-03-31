@@ -39,7 +39,8 @@ export const subscriberRouter = createTRPCRouter({
 
       const parsedData = mappedData.map((subscriber) => ({
         ...subscriber,
-        subscribed: !!subscriber.subscribed,
+        // I'm pretty sure instancing new Strings like this is not the best way to do it but I'm in a hurry and an actual good solution would involve updating the UI in the frontend to ask what string means "true" and "false"
+        subscribed: String(subscriber.subscribed).toLowerCase() == "true",
         createdAt: new Date(subscriber.createdAt) || now,
         ListId: listId,
       }));
