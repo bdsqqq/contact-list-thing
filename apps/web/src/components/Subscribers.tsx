@@ -1,6 +1,6 @@
 import { api } from "~/utils/api";
 import type { Subscriber } from "@prisma/client";
-import type { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 export const Subscribers = ({ listid }: { listid: number }) => {
   const {
@@ -9,14 +9,47 @@ export const Subscribers = ({ listid }: { listid: number }) => {
     isLoading,
   } = api.subscriber.getAllFromList.useQuery({ ListId: listid });
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>{error.message}</p>;
-  if (subscribers) {
-    if (subscribers.length === 0) return <p>No subscribers</p>;
-    return <SubscribersTable subscribersData={subscribers} />;
-  }
+  const [search, setSearch] = useState("");
+  const {
+    data: filteredSubscribers,
+    isLoading: filteredIsLoading,
+    error: filteredError,
+  } = api.subscriber.getByNameOrEmail.useQuery({
+    ListId: listid,
+    email: search,
+    name: search,
+  });
 
-  return <>Unreachable (I think)</>;
+  return (
+    <>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setSearch(e.currentTarget.searchTerm.value);
+        }}
+      >
+        <div className="mb-4 flex gap-2">
+          <Input id="searchTerm" name="searchTerm" placeholder="Search..." />
+        </div>
+      </form>
+
+      {(filteredSubscribers as Subscriber[])?.length > 0 ||
+      filteredIsLoading ||
+      filteredError ? (
+        <SubscribersTable
+          subscribers={filteredSubscribers as Subscriber[]}
+          error={filteredError}
+          isLoading={filteredIsLoading}
+        />
+      ) : (
+        <SubscribersTable
+          subscribers={subscribers}
+          error={error}
+          isLoading={isLoading}
+        />
+      )}
+    </>
+  );
 };
 
 import {
@@ -28,6 +61,7 @@ import {
 import { formatDistance } from "date-fns";
 import { Button } from "./ui/Button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { Input } from "./ui/Input";
 
 const columnHelper = createColumnHelper<Subscriber>();
 const now = new Date();
@@ -86,12 +120,31 @@ const headerWidths = {
 };
 
 const SubscribersTable = ({
-  subscribersData,
+  subscribers,
+  error,
+  isLoading,
 }: {
-  subscribersData: Subscriber[];
+  subscribers?: Subscriber[];
+  error?: any;
+  isLoading: boolean;
+}) => {
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error.message}</p>;
+  if (subscribers) {
+    if (subscribers.length === 0) return <p>No subscribers</p>;
+    return <ActualTableImSoTiredOmg subscribers={subscribers} />;
+  }
+
+  return <>Unreachable, I think</>;
+};
+
+const ActualTableImSoTiredOmg = ({
+  subscribers,
+}: {
+  subscribers: Subscriber[];
 }) => {
   const table = useReactTable({
-    data: subscribersData,
+    data: subscribers,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -104,13 +157,9 @@ const SubscribersTable = ({
             {headerGroup.headers.map((header) => (
               <th
                 className={`
-                border-slate-6 text-slate-11 h-8 border-b border-t px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
-                ${
-                  ["created", "subscribed"].includes(header.id)
-                    ? " text-right"
-                    : ""
-                }
-                `}
+          border-slate-6 text-slate-11 h-8 border-b border-t px-3 text-xs font-semibold capitalize first:rounded-l-md first:border-l last:rounded-r-md last:border-r 
+          ${["created", "subscribed"].includes(header.id) ? " text-right" : ""}
+          `}
                 style={{
                   width:
                     headerWidths[
@@ -136,11 +185,11 @@ const SubscribersTable = ({
             {row.getVisibleCells().map((cell) => (
               <td
                 className={`border-slate-6 h-10 whitespace-nowrap border-b px-3 text-sm 
-                ${
-                  ["created", "subscribed"].includes(cell.column.id)
-                    ? " text-right"
-                    : ""
-                }`}
+          ${
+            ["created", "subscribed"].includes(cell.column.id)
+              ? " text-right"
+              : ""
+          }`}
                 key={cell.id}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
