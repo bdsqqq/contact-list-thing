@@ -37,7 +37,7 @@ export const listRouter = createTRPCRouter({
     }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.list.findMany({
-      take: 10,
+      take: 20,
     });
   }),
 });

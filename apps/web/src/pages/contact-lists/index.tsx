@@ -38,6 +38,7 @@ import { useState } from "react";
 import { CSVInputs } from "~/components/Upload";
 import { Button } from "~/components/ui/Button";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { Input } from "~/components/ui/Input";
 
 const NewListDialog = () => {
   const { clearStore } = useCsvDataStore();
@@ -110,13 +111,12 @@ const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
         >
           Name
         </label>
-        <input
-          required
+        <Input
           type="text"
+          required
           id="list-name"
           name="list-name"
           autoComplete="off"
-          className="border-slate-6 bg-slate-4 text-slate-12 focus:ring-slate-7 placeholder:text-slate-11 relative h-8 w-full select-none appearance-none rounded-md border px-2 pl-[--text-field-left-slot-width] pr-[--text-field-right-slot-width] text-sm outline-none transition duration-200 ease-in-out focus:ring-2"
         />
       </div>
       <div className="flex flex-col space-y-6">
