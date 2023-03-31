@@ -95,7 +95,7 @@ import {
   DialogClose,
 } from "~/components/ui/Dialog";
 
-const AddContacts = ({ listId }: { listId: number }) => {
+export const AddContacts = ({ listId }: { listId: number }) => {
   const { clearStore } = useCsvDataStore();
 
   return (
