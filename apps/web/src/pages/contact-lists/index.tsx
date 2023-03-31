@@ -68,9 +68,9 @@ const NewListDialog = () => {
 };
 
 const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
-  const addContacts = api.subscriber.createMany.useMutation();
+  const addSubscribers = api.subscriber.parseAndCreateMany.useMutation();
   const addList = api.list.create.useMutation();
-  const { clearStore, parsedData } = useCsvDataStore();
+  const { clearStore, overrides, columns } = useCsvDataStore();
 
   // TODO: this is here only because of initialFileData, maybe move this to CSV Inputs???
   const [fileData, setFileData] = useState<string>(initialFileData || "");
@@ -85,18 +85,13 @@ const NewListForm = ({ initialFileData }: { initialFileData?: string }) => {
           },
           {
             onSuccess: (data) => {
-              if (!parsedData) return;
-              addContacts.mutate(
-                //  TODO: DAMNNN, this should probably be handled in the parser, I'm doing it EVERYWHERE.
-                parsedData.data.map((subscriber) => ({
-                  ...subscriber,
-                  subscribed: subscriber.subscribed === "true",
-                  createdAt:
-                    (subscriber.createdAt && new Date(subscriber.createdAt)) ||
-                    new Date(),
-                  ListId: data.id,
-                }))
-              );
+              if (columns && fileData && overrides) {
+                addSubscribers.mutate({
+                  listId: data.id,
+                  csvData: fileData,
+                  overrides: overrides,
+                });
+              }
             },
           }
         );
