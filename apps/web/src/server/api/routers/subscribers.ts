@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { csvToJson, mapCsvProperties } from "~/utils/csv";
 
 import { subscriberSchema } from "~/utils/schemas";
 
@@ -16,6 +17,38 @@ export const subscriberRouter = createTRPCRouter({
       },
     });
   }),
+  parseAndCreateMany: publicProcedure
+    .input(
+      z.object({
+        csvData: z.string(),
+        overrides: z.object({
+          name: z.string().array().optional().or(z.string().optional()),
+          email: z.string().array().optional().or(z.string().optional()),
+          subscribed: z.string().array().optional().or(z.string().optional()),
+          createdAt: z.string().array().optional().or(z.string().optional()),
+        }),
+        listId: z.number().int(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      const { csvData, overrides, listId } = input;
+      const { columns, data: csvAsJson } = csvToJson(csvData);
+      const mappedData = mapCsvProperties(csvAsJson, overrides);
+
+      const now = new Date();
+
+      const parsedData = mappedData.map((subscriber) => ({
+        ...subscriber,
+        subscribed: !!subscriber.subscribed,
+        createdAt: new Date(subscriber.createdAt) || now,
+        ListId: listId,
+      }));
+
+      return ctx.prisma.subscriber.createMany({
+        data: parsedData,
+        skipDuplicates: true,
+      });
+    }),
   createMany: publicProcedure
     .input(z.array(subscriberSchema))
     .mutation(({ input, ctx }) => {

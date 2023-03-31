@@ -30,14 +30,17 @@ import {
   ComboboxPopover,
 } from "~/components/ui/ComboBox";
 
+import { mockData } from "~/utils/mockData/mockData";
+
 const Home: NextPage = () => {
-  const { data, isLoading, error } = api.subscriber.getByNameOrEmail.useQuery({
-    name: "bu",
-    email: "bu",
-    ListId: 1,
+  const parseAndCreateMany = api.subscriber.parseAndCreateMany.useMutation();
+  const { data, error, isLoading } = api.subscriber.getAllFromList.useQuery({
+    ListId: 9,
   });
 
   const comboboxState = useComboboxState({ gutter: 4, sameWidth: true });
+
+  const queryContext = api.useContext();
 
   return (
     <>
@@ -48,6 +51,27 @@ const Home: NextPage = () => {
       </Head>
       <Shell>
         <div className="flex flex-col gap-8">
+          <Button
+            onClick={async () => {
+              await parseAndCreateMany.mutateAsync(
+                {
+                  listId: 9,
+                  csvData: mockData.withHeadersThatDontMatchOurSchema,
+                  overrides: {
+                    name: ["first_name", "last_name"],
+                  },
+                },
+                {
+                  onSuccess: (data) => {
+                    queryContext.invalidate();
+                  },
+                }
+              );
+            }}
+          >
+            Create
+          </Button>
+
           <>
             {isLoading && <p>Loading...</p>}
             {error && <p>Error: {error.message}</p>}
@@ -99,21 +123,6 @@ const Home: NextPage = () => {
               ))}
             </ComboboxPopover>
           </div>
-
-          {/* <section>
-            <h2>LISTS</h2>
-            <ContactLists />
-          </section>
-
-          <section>
-            <h2>SUBSCRIBERS</h2>
-            <Subscribers listid={1} />
-          </section>
-
-          <section>
-            <h2>UPLOAD</h2>
-            <Upload />
-          </section> */}
         </div>
       </Shell>
     </>
