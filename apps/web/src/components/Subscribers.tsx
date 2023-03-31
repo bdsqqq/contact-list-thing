@@ -36,7 +36,7 @@ export const Subscribers = ({ listid }: { listid: number }) => {
         </div>
       </form>
 
-      {search.length > 0 ? (
+      {subscribers?.length && search.length > 0 ? (
         <SubscribersTable
           subscribers={filteredSubscribers as Subscriber[]}
           error={filteredError}
