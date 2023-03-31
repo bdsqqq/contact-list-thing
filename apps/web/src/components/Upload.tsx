@@ -213,12 +213,11 @@ const MapInput = ({
             }
 
             if (e.key === "Tab") {
-              if (!comboboxState.value || comboboxState.items[0]?.value) {
+              if (comboboxState.value && comboboxState.items[0]?.value) {
                 e.stopPropagation();
                 e.preventDefault();
+                handleAddOverride(comboboxState.items[0]?.value || "");
               }
-              handleAddOverride(comboboxState.items[0]?.value || "");
-              comboboxState.setValue("");
             }
 
             if (
