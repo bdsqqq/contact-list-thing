@@ -59,7 +59,7 @@ export const Subscribers = ({ listid }: { listid: number }) => {
           emptyState={
             <EmptyState
               title="This list has no subscribers yet"
-              description="You can add subscribers by uploading a CSV file or by [other way of adding subscribers resend might provide]"
+              description="You can add subscribers by uploading a CSV file or by [other way of adding subscribers redacted might provide]"
               action={<AddContacts listId={listid} />}
             />
           }
