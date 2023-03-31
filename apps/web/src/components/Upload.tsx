@@ -144,10 +144,8 @@ const MapInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAddOverride = (value: string) => {
-    console.log("init add override", value);
     if (value && normalizedColumns.includes(normalizeText(value))) {
       comboboxState.setValue("");
-      console.log("adding override", value);
       setSelectedOverrides((prev) => [...prev, value]);
       comboboxState.setValue("");
     }
@@ -168,14 +166,6 @@ const MapInput = ({
     .filter((column) =>
       normalizeText(column).includes(normalizeText(comboboxState.value))
     );
-
-  useEffect(() => {
-    console.log("selectedOverrides", selectedOverrides);
-    console.log("columns", columns);
-    console.log("filteredOptions", filteredOptions);
-    console.log("comboboxState.value", comboboxState.value);
-    console.log("normalizedColumns", normalizedColumns);
-  }, [selectedOverrides]);
 
   return (
     <>
@@ -210,11 +200,6 @@ const MapInput = ({
                 e.preventDefault();
               }
               if (filteredOptions.length > 0) {
-                console.log("Combobox enter");
-                console.log(
-                  "virtual focus combobox",
-                  comboboxState.virtualFocus
-                );
                 handleAddOverride(comboboxState.value);
               }
             }
@@ -248,11 +233,6 @@ const MapInput = ({
               onKeyDown={(e) => {
                 e.stopPropagation();
                 if (e.key === "Enter") {
-                  console.log("option enter");
-                  console.log(
-                    "virtual focus option",
-                    comboboxState.virtualFocus
-                  );
                   e.preventDefault();
                   handleAddOverride(column);
                 }
