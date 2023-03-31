@@ -64,7 +64,7 @@ const CSVInputs = ({
             <UploadIcon className="h-5 w-5" />
             <p className="text-center">
               <span>Click</span> or <span>Drag</span> your contact list .csv to
-              upload (max. 2MB)
+              upload
             </p>
           </div>
           <input
