@@ -33,10 +33,13 @@ const CSVInputs = ({
   const [rerenderForcer, setRerenderForcer] = useState(0);
   const forceRerender = () => setRerenderForcer((prev) => prev + 1);
 
+  const [fileName, setFileName] = useState("");
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     forceRerender();
     if (!file) return;
+    setFileName(file.name);
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -52,7 +55,31 @@ const CSVInputs = ({
 
   return (
     <>
-      <input type="file" onChange={handleFileChange} />
+      <div className="flex w-full items-center justify-center">
+        <label
+          htmlFor="file-input"
+          className="hover:bg-slate-4 bg-slate-3 border-slate-7 hover:border-slate-8 border-1 flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-md border border-dashed"
+        >
+          <div className="flex flex-col items-center justify-center gap-2 px-8">
+            <UploadIcon className="h-5 w-5" />
+            <p className="text-center">
+              <span>Click</span> or <span>Drag</span> your contact list .csv to
+              upload (max. 2MB)
+            </p>
+          </div>
+          <input
+            type="file"
+            id="file-input"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </label>
+      </div>
+      {fileName && (
+        <div className="flex items-center gap-2">
+          <FileIcon className="h-5 w-5" /> {fileName}
+        </div>
+      )}
       {fileData && (
         <div className="flex flex-col space-y-2">
           {/* // TODO: THIS ISN'T WORKING CORRECTLY, the autocomplete only responds on odd number of uploads */}
@@ -104,7 +131,12 @@ import {
   ComboboxPopover,
 } from "~/components/ui/ComboBox";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeftIcon, Cross1Icon } from "@radix-ui/react-icons";
+import {
+  ArrowLeftIcon,
+  Cross1Icon,
+  FileIcon,
+  UploadIcon,
+} from "@radix-ui/react-icons";
 import { Button } from "~/components/ui/Button";
 
 const normalizeText = (text: string) =>
