@@ -1,73 +1,55 @@
-# Turborepo starter
+# Contact list thing
 
-This is an official pnpm starter turborepo.
+Repo for an interview process at ~~redacted~~
 
-## What's inside?
+## Results
 
-This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes the following packages/apps:
+![image](https://user-images.githubusercontent.com/37847523/229252811-283c3031-ccf8-497d-b8b6-2dc29e78df88.png)
 
-### Apps and Packages
+With a limited ammount of time, I didn't acomplish everything I wanted, namely a queue for adding entries to the database in batches and making most things non-blocking so the user can keep using the app while a CSV is being parsed and uploaded.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+I'm happy with my implementation of most of the UI; A highlight is the interaction for mapping columns from an uploaded .csv file to our expected columns. Some elements are missing, like feedback for uploads, automatic navigation when creating a list, modals closing on "primary action" click.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+All in all, I feel like I made a good job in prioritizing and adapting to changes in information, ideally I'd have identified some of these points of improvement earlier since multiple of them are critical. I'm confident in trade-offs I made in tech choices considering the nature of this project as a take home assignment.
 
-### Utilities
+During the second half of the timeline, I struggled to keep a healthy balance of work, life and this assignment. My anxiety grew as the deadline approached culminating in an Igor that didn't feel confident about what he did and that would collapse after delivery. 
 
-This turborepo has some additional tools already setup for you:
+## Specification
+### Overview
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+The goal of this project is to upload different contact list as CSV, map, parse and save in the database.
 
-### Build
+### Requirements
 
-To build all apps and packages, run the following command:
+- Front-end Next.js with Typescript
+- Use Supabase to store data
 
-```
-cd my-turborepo
-pnpm run build
-```
+### Timeline
 
-### Develop
+This project should be completed by the end of the week.
 
-To develop all apps and packages, run the following command:
+- Day 1 (Fri 24 Mar): Start & Code
+- Day 2 (Mon 27 Mar): Code + 10min Daily 
+- Day 3 (Tue 28 Mar): Code + 10min Daily 
+- Day 4 (Wed 29 Mar): Code + 10min Daily 
+- Day 5 (Thu 30 Mar): Code + 10min Daily
+- Day 6 (Fri 31 Mar): Demo for the team
 
-```
-cd my-turborepo
-pnpm run dev
-```
+### Deliverables
 
-### Remote Caching
+The final deliverable for this project should include:
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+#### Front-end
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+- A view with a table of contacts (name, email, subscribed, created_at), a way to upload a contact list as CSV, and searchable
+- Once the CSV is uploaded, the user needs a way to map each field
+    - eg: If in the CSV instead of `name` is `First Name`, the user needs to map `First Name -> name`
 
-```
-cd my-turborepo
-pnpm dlx turbo login
-```
+#### API
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- User should be able to import different contact lists, but we should verify and not save duplicated entries based on their emails
+    - Eg: User uploads `list1.csv` that has `bu@resend.com` , when they upload `list2.csv` which also has `bu@resend.com` , we shouldn’t save that entry in our database
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
+#### SDK
 
-```
-pnpm dlx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+- Script to do make the request to the API (SDK-like) — should be really simple, the above is more important
